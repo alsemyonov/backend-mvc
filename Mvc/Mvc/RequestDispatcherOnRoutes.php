@@ -1,0 +1,104 @@
+<?
+/**
+ * Standard request dispatcher.
+ */
+class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatcher
+{
+    protected $routes;
+
+    protected $item;
+
+    public function setRoutes($routes)
+    {
+        $this->routes = $routes;
+    }
+
+    /**
+     * Returns array to use with Backend_Routes::find(). 
+     * If you want to use extra arguments such as session values or request headers, 
+     * you should override this function.
+     *
+     * @returns array Backend_Routes::find() arguments.
+     */
+    public function getRoutesArgs($request)
+    {
+        return array(
+            'host'=>$request->getHost(),
+            'port'=>$request->getPort(),
+            'query'=>$request->getQuery(),
+            'headers'=>$request->getHeaders(),
+            'method'=>$request->getMethod(),
+            'ip'=>$request->getRemoteAddr()
+        );
+    }
+
+    protected function setItem($item)
+    {
+        $this->item = $item;
+    }
+
+    protected function getItem()
+    {
+        return $this->item;
+    }
+
+    protected function setMatches($matches)
+    {
+        $this->matches = $matches;
+    }
+
+    protected function getMatches()
+    {
+        return $this->matches;
+    }
+
+    /**
+     * Returns true if request dispatched and false if request is not dispatched.
+     *
+     * @returns list Result objects and view object or false.
+     */
+    public function dispatch($request)
+    {
+        $matches = array();
+
+        $item = $this->routes->find($request->getPath(), &$matches, $this->getRoutesArgs($request));
+        if (!$item)
+        {
+            $e404 = $this->routes->find('/404/', &$matches, $this->getRoutesArgs($request));
+            if (!$e404)
+            {
+                return false;
+            }
+        }
+
+        $this->setItem($item);
+        $this->setMatches($matches);
+
+        return true;
+    }
+
+
+    /**
+     * Do actions. Returns View.
+     */
+    public function run($request, $response)
+    {
+        $params = array_merge($this->getMatches(), $this->getItem()->getParams());
+        $pass2view = array();
+
+        $action = $this->item->getAction();
+
+        $controllerClass = $action[0];
+        $action = $action[1];
+        $controller = new $controllerClass();
+        if (!is_callable(array($controller, $action)));
+
+        $result = call_user_func_array(
+            array($controller, $action),
+            array($request, $response, $params)
+        );
+
+        return $result;
+    }
+}
+?>

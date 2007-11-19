@@ -1,6 +1,4 @@
 <?php
-require_once 'Backend/Routes/Item.php';
-
 /**
  * Элемент карты адресов для сайта, использующего MVC.
  */
@@ -16,23 +14,14 @@ class Backend_Mvc_Routes_Item extends Backend_Routes_Item
      * Массив действий.
      * @var array
      */
-    protected $actions = array();
+    protected $action = array();
 
     /** 
      * Устанавливает вид для адреса.
      */
     function view($view)
     {
-        $this->view = $view;
-        return $this;
-    }
-
-    /** 
-     * Возвращает вид.
-     */
-    function getView()
-    {
-        return $this->view;
+        return $this->param('view', $view);
     }
 
     /**
@@ -40,7 +29,7 @@ class Backend_Mvc_Routes_Item extends Backend_Routes_Item
      */
     function action()
     {
-        $this->actions[] = func_get_args();
+        $this->action = func_get_args();
 
         return $this;
     }
@@ -48,9 +37,9 @@ class Backend_Mvc_Routes_Item extends Backend_Routes_Item
     /**
      * Добавляет возвращает действия.
      */
-    function getActions()
+    function getAction()
     {
-        return $this->actions;
+        return $this->action;
     }
 
     /**
