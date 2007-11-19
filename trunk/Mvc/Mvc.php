@@ -1,11 +1,20 @@
 <?php
+require_once 'PEAR.php';
+require_once 'PEAR/Exception.php';
+
 require_once 'Mvc/Request.php';
 require_once 'Mvc/Response.php';
-require_once 'Mvc/IRequestDispatcher.php';
 require_once 'Mvc/RequestDispatcher.php';
+require_once 'Mvc/RequestDispatcherOnRoutes.php';
 require_once 'Mvc/Routes.php';
-require_once 'Mvc/IDispatchResult.php';
-require_once 'Mvc/DispatchResult.php';
+require_once 'Mvc/View.php';
+require_once 'Mvc/View/Template.php';
+require_once 'Mvc/View/TemplateXslt.php';
+require_once 'Mvc/TemplateRenderer.php';
+require_once 'Mvc/TemplateRenderer/Xslt.php';
+require_once 'Mvc/TemplateRenderer/Php.php';
+require_once 'Mvc/TemplateResolver.php';
+require_once 'Mvc/Controller/Service.php';
 
 /**
  * Abstract base main class.
@@ -13,7 +22,7 @@ require_once 'Mvc/DispatchResult.php';
 abstract class Backend_Mvc
 {
     /**
-     * Factory function to create request object.
+     * Factory method to create request object.
      */
     protected function createRequest()
     {
@@ -21,30 +30,47 @@ abstract class Backend_Mvc
     }
 
     /**
-     * Factory function to create response object.
+     * Factory method to create response object.
      */
     protected function createResponse()
     {
         return new Backend_Mvc_Response();
     }
 
+    /**
+     * Factory method to create request dispatcher.
+     *
+     * By default, it creates Backend_Mvc_RequestDispatcherOnRoutes.
+     */
     protected function createDispatcher()
     {
-        return new Backend_Mvc_RequestDispatcher();
+        return new Backend_Mvc_RequestDispatcherOnRoutes();
     }
 
+    /**
+     * Called before dispatcher starts processing.
+     *
+     * Here you could set dispatch parameters.
+     */
     abstract protected function beforeDispatch($dispatcher);
 
+    /**
+     * Called before dispatch results runs.
+     */
     protected function beforeResultRun($result)
     {
     }
 
+    /**
+     * Called before view display.
+     */
     protected function beforeDisplayView($view)
     {
     }
 
     /**
      * Runs request processing.
+     * @todo Dispatch failed.
      */
     public function run()
     {
@@ -52,17 +78,18 @@ abstract class Backend_Mvc
         $response = $this->createResponse();
 
         $dispatcher = $this->createDispatcher();
+
         $this->beforeDispatch($dispatcher);
-
         $result = $dispatcher->dispatch($request);
+        if (!$result) throw new PEAR_Exception('Page not found');
+
         $this->beforeResultRun($result);
-        $pass = $result->run($request, $response);
+        $view = $dispatcher->run($request, $response);
 
-        $view = $result->createView();
         $this->beforeDisplayView($view);
-        $view->show($pass, $response);
+        $view->show($request, $response);
 
-        echo $response->getOutput();
+        $response->send();
     }
 }
 ?>

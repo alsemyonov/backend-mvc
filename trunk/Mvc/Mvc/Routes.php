@@ -1,5 +1,5 @@
 <?php
-require_once 'Backend/Mvc/Routes.php';
+require_once 'Routes/Item.php';
 
 class Backend_Mvc_Routes extends Backend_Routes
 {

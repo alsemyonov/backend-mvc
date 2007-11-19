@@ -1,9 +1,12 @@
 <?php
+/**
+ * @todo header functions: lcase.
+ */
 class Backend_Mvc_Response
 {
     protected $out;
-    protected $handlers = array();
     protected $headers = array();
+    protected $handlers = array();
 
     /**
      * Registers output filter.
@@ -20,12 +23,15 @@ class Backend_Mvc_Response
 
     function getHeader($name)
     {
+        return $this->headers[$name];
     }
 
     function getHeaders()
     {
+        return $this->headers;
     }
 
+/*
     function setEncoding()
     {
     }
@@ -41,16 +47,36 @@ class Backend_Mvc_Response
     function getContentType()
     {
     }
+*/
 
-    function out()
+    /**
+     * "Echo sprintf(...)" to internal output buffer.
+     */
+    function out($str)
     {
-        $s = call_user_func_array("sprintf", func_get_args());
-        $this->out .= $s;
+        $this->out .= $str;
     }
 
+    /**
+     * Returns output buffer.
+     * @todo Handlers...
+     */
     function getOutput()
     {
         return $this->out;
+    }
+
+    /**
+     * Redirect function.
+     */
+    function sendRedirect($url)
+    {
+    }
+
+    function send()
+    {
+        // hgeaders
+        echo $this->getOutput();
     }
 }
 ?>
