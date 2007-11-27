@@ -6,8 +6,6 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
 {
     protected $routes;
 
-    protected $item;
-
     public function setRoutes($routes)
     {
         $this->routes = $routes;
@@ -32,32 +30,12 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
         );
     }
 
-    protected function setItem($item)
-    {
-        $this->item = $item;
-    }
-
-    protected function getItem()
-    {
-        return $this->item;
-    }
-
-    protected function setMatches($matches)
-    {
-        $this->matches = $matches;
-    }
-
-    protected function getMatches()
-    {
-        return $this->matches;
-    }
-
     /**
      * Returns true if request dispatched and false if request is not dispatched.
      *
      * @returns list Result objects and view object or false.
      */
-    public function dispatch($request)
+    public function dispatch($request, $response)
     {
         $matches = array();
 
@@ -71,22 +49,19 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
             }
         }
 
-        $this->setItem($item);
-        $this->setMatches($matches);
-
-        return true;
+        return $this->run($item, $matches, $request, $response);
     }
 
 
     /**
      * Do actions. Returns View.
      */
-    public function run($request, $response)
+    protected function run($item, $matches, $request, $response)
     {
-        $params = array_merge($this->getMatches(), $this->getItem()->getParams());
+        $params = array_merge($matches, $item->getParams());
         $pass2view = array();
 
-        $action = $this->item->getAction();
+        $action = $item->getAction();
 
         $controllerClass = $action[0];
         $action = $action[1];
