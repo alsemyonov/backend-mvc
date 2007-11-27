@@ -6,6 +6,7 @@ require_once 'Mvc/Request.php';
 require_once 'Mvc/Response.php';
 require_once 'Mvc/RequestDispatcher.php';
 require_once 'Mvc/RequestDispatcherOnRoutes.php';
+require_once 'Mvc/RequestDispatcherOnFiles.php';
 require_once 'Mvc/Routes.php';
 require_once 'Mvc/View.php';
 require_once 'Mvc/View/Template.php';
@@ -19,7 +20,7 @@ require_once 'Mvc/Controller/Service.php';
 /**
  * Abstract base main class.
  */
-abstract class Backend_Mvc
+class Backend_Mvc
 {
     /**
      * Factory method to create request object.
@@ -44,7 +45,7 @@ abstract class Backend_Mvc
      */
     protected function createDispatcher()
     {
-        return new Backend_Mvc_RequestDispatcherOnRoutes();
+        return new Backend_Mvc_RequestDispatcherOnFiles();
     }
 
     /**
@@ -52,7 +53,9 @@ abstract class Backend_Mvc
      *
      * Here you could set dispatch parameters.
      */
-    abstract protected function beforeDispatch($dispatcher);
+    protected function beforeDispatch($dispatcher)
+    {
+    }
 
     /**
      * Called before dispatch results runs.
@@ -80,11 +83,8 @@ abstract class Backend_Mvc
         $dispatcher = $this->createDispatcher();
 
         $this->beforeDispatch($dispatcher);
-        $result = $dispatcher->dispatch($request);
-        if (!$result) throw new PEAR_Exception('Page not found');
-
-        $this->beforeResultRun($result);
-        $view = $dispatcher->run($request, $response);
+        $view = $dispatcher->dispatch($request, $response);
+        if (!$view) throw new PEAR_Exception('Page not found');
 
         $this->beforeDisplayView($view);
         $view->show($request, $response);

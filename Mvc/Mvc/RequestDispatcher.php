@@ -9,11 +9,6 @@ abstract class Backend_Mvc_RequestDispatcher
      *
      * It has request object on input and should return array of Backend_Mvc_IDispatchResult objects.
      */
-    abstract public function dispatch($request);
-
-    /**
-     * Do actions. Returns View with data set.
-     */
-    abstract public function run($request, $response);
+    abstract public function dispatch($request, $response);
 }
 ?>

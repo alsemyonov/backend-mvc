@@ -22,11 +22,14 @@ class Backend_Mvc_Request
      */
     function __construct()
     {
-        $this->headers = getallheaders();
+        if (function_exists('getallheaders')) {
+            $this->headers = getallheaders();
+        }
+
         $p = parse_url($_SERVER['REQUEST_URI']);
         $this->path = $p['path'];
         $this->pathParts = split('/', $this->path);
-        $this->pathParts = array_filter($this->pathParts, create_function('$el', 'return $el=="";'));
+        $this->pathParts = array_filter($this->pathParts, create_function('$el', 'return $el!="";'));
         $this->port = $_SERVER['SERVER_PORT'];
         $this->query = array_merge($_GET, $_POST);
         $this->remoteAddr = $_SERVER['REMOTE_ADDR'];
