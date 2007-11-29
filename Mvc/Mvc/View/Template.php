@@ -47,7 +47,7 @@ abstract class Backend_Mvc_View_Template extends Backend_Mvc_View
      */
     function fromHash($data)
     {
-        $this->getRenderer()->setData($data);
+        $this->getRenderer()->setHash($data);
         return $this;
     }
 
