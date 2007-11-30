@@ -1,0 +1,2 @@
+1. internalEncoding
+2. Добавить $action и $controller чтоб они получались из Routes.

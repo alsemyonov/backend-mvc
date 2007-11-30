@@ -9,6 +9,7 @@ require_once 'Mvc/RequestDispatcherOnRoutes.php';
 require_once 'Mvc/RequestDispatcherOnFiles.php';
 require_once 'Mvc/Routes.php';
 require_once 'Mvc/View.php';
+require_once 'Mvc/View/Json.php';
 require_once 'Mvc/View/Template.php';
 require_once 'Mvc/View/TemplateXslt.php';
 require_once 'Mvc/TemplateRenderer.php';
@@ -16,6 +17,7 @@ require_once 'Mvc/TemplateRenderer/Xslt.php';
 require_once 'Mvc/TemplateRenderer/Php.php';
 require_once 'Mvc/TemplateResolver.php';
 require_once 'Mvc/Controller/Service.php';
+require_once 'Mvc/Controller/Ajax.php';
 
 /**
  * Abstract base main class.
