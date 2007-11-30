@@ -7,6 +7,8 @@ class Backend_Mvc_Response
     protected $out;
     protected $headers = array();
     protected $handlers = array();
+    protected $encoding = null;
+    protected $contentType = null;
 
     /**
      * Registers output filter.
@@ -31,23 +33,25 @@ class Backend_Mvc_Response
         return $this->headers;
     }
 
-/*
-    function setEncoding()
+    function setEncoding($encoding)
     {
+        $this->encoding = $encoding;
     }
 
     function getEncoding()
     {
+        return $this->encoding;
     }
 
-    function setContentType()
+    function setContentType($contentType)
     {
+        $this->contentType = $contentType;
     }
 
     function getContentType()
     {
+        return $this->contentType;
     }
-*/
 
     /**
      * "Echo sprintf(...)" to internal output buffer.
@@ -75,7 +79,15 @@ class Backend_Mvc_Response
 
     function send()
     {
-        // hgeaders
+        if (($this->encoding) || ($this->contentType)) {
+            $contentType = $this->contentType ? $this->contentType : 'text/html';
+            $this->setHeader('Content-type', $contentType.($this->encoding ? '; charset='.$this->encoding : '' ) );
+        }
+
+        foreach($this->getHeaders() as $name=>$header)
+        {
+            header($name.': '.$header);
+        }
         echo $this->getOutput();
     }
 }
