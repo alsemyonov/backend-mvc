@@ -55,7 +55,7 @@ class Backend_Mvc
      *
      * Here you could set dispatch parameters.
      */
-    protected function beforeDispatch($dispatcher)
+    protected function beforeDispatch($request, $response, $dispatcher)
     {
     }
 
@@ -84,7 +84,7 @@ class Backend_Mvc
 
         $dispatcher = $this->createDispatcher();
 
-        $this->beforeDispatch($dispatcher);
+        $this->beforeDispatch($request, $response, $dispatcher);
         $view = $dispatcher->dispatch($request, $response);
         if (!$view) throw new PEAR_Exception('Page not found');
 
