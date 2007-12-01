@@ -1,4 +1,5 @@
 <?php
+/* @todo Блядская кодировка. UTF globalizing? */
 class Backend_Mvc_Controller_Ajax
 {
     function ajax($req, $res, $args)
