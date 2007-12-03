@@ -36,7 +36,7 @@ class Backend_Mvc_TemplateRenderer_Xslt extends Backend_Mvc_TemplateRenderer
      */
     protected function generate($data)
     {
-        $xml = '<?xml version="1.0" encoding="Windows-1251"?>';
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>';
 
         $xml .= '<root>';
         $xml .= self::asXml($data);
