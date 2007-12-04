@@ -83,11 +83,11 @@ class Backend_Mvc_Response
             $contentType = $this->contentType ? $this->contentType : 'text/html';
             $this->setHeader('Content-type', $contentType.($this->encoding ? '; charset='.$this->encoding : '' ) );
         }
-
         foreach($this->getHeaders() as $name=>$header)
         {
             header($name.': '.$header);
         }
+
         echo $this->getOutput();
     }
 }
