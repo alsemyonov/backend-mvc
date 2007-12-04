@@ -21,7 +21,7 @@ class Backend_Mvc_View_Json extends Backend_Mvc_View
         $response->setContentType('text/javascript'); //$response->setContentType('application/x-json');
         $data = json_encode($this->getData());
 
-        $response->setHeader('X-JSON', $data);
+//        $response->setHeader('X-JSON', $data);
         $response->out($data);
     }
 }
