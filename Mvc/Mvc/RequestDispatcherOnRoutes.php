@@ -68,10 +68,7 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
         $controller = new $controllerClass();
         if (!is_callable(array($controller, $action)));
 
-        $result = call_user_func_array(
-            array($controller, $action),
-            array($request, $response, $params)
-        );
+        $result = $controller->$action($request, $response, $params);
 
         return $result;
     }
