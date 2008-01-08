@@ -40,11 +40,9 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
         $matches = array();
 
         $item = $this->routes->find($request->getPath(), &$matches, $this->getRoutesArgs($request));
-        if (!$item)
-        {
-            $e404 = $this->routes->find('/404/', &$matches, $this->getRoutesArgs($request));
-            if (!$e404)
-            {
+        if (!$item) {
+            $item = $this->routes->find('/404/', &$matches, $this->getRoutesArgs($request));
+            if (!$item) {
                 return false;
             }
         }

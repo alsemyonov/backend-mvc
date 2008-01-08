@@ -3,6 +3,7 @@
 class Backend_Mvc_View_Xml extends Backend_Mvc_View
 {
     protected $data;
+    protected $rootElement = 'root';
 
     function setHash($data)
     {
@@ -14,9 +15,9 @@ class Backend_Mvc_View_Xml extends Backend_Mvc_View
     {
         $xml = '<?xml version="1.0" encoding="utf-8"?>';
 
-        $xml .= '<root>';
+        $xml .= '<'.$this->rootElement.'>';
         $xml .= Backend_Mvc_TemplateRenderer_Xslt::asXml($this->data);
-        $xml .= '</root>';
+        $xml .= '</'.$this->rootElement.'>';
 
         return $xml;
     }
