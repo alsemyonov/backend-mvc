@@ -49,7 +49,7 @@ class Backend_Mvc_Routes_Item extends Backend_Routes_Item
     {
         parent::using($template);
         $this->view = $template->view;
-        $this->action = array_merge($this->actions, $template->actions);
+        $this->action = array_merge($this->action, $template->getAction());
         return $this;
     }
 }

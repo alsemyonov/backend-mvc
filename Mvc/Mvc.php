@@ -12,6 +12,7 @@ require_once 'Mvc/View.php';
 require_once 'Mvc/View/Json.php';
 require_once 'Mvc/View/Template.php';
 require_once 'Mvc/View/TemplateXslt.php';
+require_once 'Mvc/View/Rss.php';
 require_once 'Mvc/TemplateRenderer.php';
 require_once 'Mvc/TemplateRenderer/Xslt.php';
 require_once 'Mvc/TemplateRenderer/Php.php';

@@ -15,7 +15,7 @@ class Backend_Mvc_Controller_Ajax
 
         if (!method_exists($this, $method)) return false;
 
-        //$r = call_user_func_array(array($this, $method), array($req, $args));
+//        $r = call_user_func_array(array($this, $method), array($req, $args));
         $r = $this->$method($req, $args); // Небольшой прирост в производительности. Да и понятнее, вроде.
 
         return $view->setHash($r);
