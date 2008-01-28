@@ -27,7 +27,6 @@ class Backend_Mvc_Request
         }
 
         $p = parse_url($_SERVER['REQUEST_URI']);
-        if (substr($p['path'], -1) != '/') $p['path'] .= '/';
         $this->path = $p['path'];
         $this->pathParts = split('/', $this->path);
         $this->pathParts = array_filter($this->pathParts, create_function('$el', 'return $el!="";'));
