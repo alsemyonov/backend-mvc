@@ -1,0 +1,6 @@
+DirectoryIndex index.php
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ /index.php?http_authorization=%{HTTP:Authorization}&%{QUERY_STRING} [L] #[E=path:$1,E=REMOTE_USER:%{HTTP:Authorization},L]
