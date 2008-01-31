@@ -40,5 +40,6 @@ class Application extends Backend_Mvc
 
         include B_APP . 'routes.php';
 
+        $dispatcher->setRoutes($routes);
     }
 }
