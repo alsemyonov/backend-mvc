@@ -1,5 +1,5 @@
 ﻿Backend.Manager = Class.create({
-    name: 'uploads',
+    name: '',
     table: null,
     form: null,
     editor: null,
