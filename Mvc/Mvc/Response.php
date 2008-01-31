@@ -73,8 +73,12 @@ class Backend_Mvc_Response
     /**
      * Redirect function.
      */
-    function sendRedirect($url)
+    function sendRedirect($url, $force = true)
     {
+        header('Location: ' . $url);
+        if ($force) {
+            die();
+        }
     }
 
     function send()
