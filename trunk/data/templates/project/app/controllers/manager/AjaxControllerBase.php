@@ -3,7 +3,8 @@ class AjaxControllerBase extends IndexController
 {
     var $model;
 
-    function _parseParameters($req, $args) {
+    function _parseParameters($req, $args) 
+    {
         $query = $req->getQuery();
 
         $id         = isset($query['id'])?          $query['id']:           null;
@@ -99,7 +100,8 @@ class AjaxControllerBase extends IndexController
     }
    
 
-    function getpage($req, $args) {
+    function getpage($req, $args)
+    {
         $query = $req->getQuery('page');
         $page = $query['page'] > 0 ? $query['page'] : 1;
         return $this->model->getPage($page, 20, null, false);
@@ -113,7 +115,8 @@ class AjaxControllerBase extends IndexController
         return array('result' => true);
     }
     
-    protected function moveUpload($name, $fileName) {
+    protected function moveUpload($name, $fileName)
+    {
         $dirName = dirname($fileName);
         if (!is_dir($dirName)) {
             mkdir($dirName, 0777);
@@ -127,7 +130,8 @@ class AjaxControllerBase extends IndexController
         return false;
     }
 
-    function moveImage($name, $fileName) {
+    function moveImage($name, $fileName)
+    {
         //dbg($_FILES);
         if (!empty($_FILES[$name])) {
             
