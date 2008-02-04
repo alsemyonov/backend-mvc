@@ -21,7 +21,7 @@
 <xsl:call-template name="head"/>
 <script src="/site/js/<?= $pageId; ?>.js"></script>
 
-<body onload="javascript: page.load();">
+<body>
 
 <xsl:call-template name="header"/>
 
@@ -51,8 +51,8 @@
 <thead>
 <tr>
 <?
-foreach($columns as $column) {
-    if ($column['show']) {
+foreach($columns as $columnId=>$column) {
+    if ($column['isColumn']) {
 ?>
     <th width="3%"><?=$column['title'];?></th>
 <?
@@ -78,13 +78,42 @@ foreach($columns as $column) {
 <fieldset>
 	<legend><?= $set['legend'];?></legend>
     <? foreach ($set['fields'] as $field) {
-        foreach($columns as $cur)
-         if ($cur['id'] == $field) { $column = $cur; break; }
+        $column = $columns[$field];
     ?>
 	<div>
 		<label><?= $column['title']; ?></label>
-		<input type="text" name="values[<?=$column['id'];?>]"/>
-	</div>
+        <?
+            switch($column['type']) {
+                case 'string':
+        ?>
+        <input type="text" name="values[<?=$field;?>]" maxLength="<?=$column['length'];?>"/>
+        <?
+                break;
+                case 'integer':
+        ?>
+        <input type="text" name="values[<?=$field;?>]"/>
+        <?
+                break;
+                case 'clob':
+        ?>
+        <textarea name="values[<?=$field;?>]"></textarea>
+        <?
+                break;
+                case 'select':
+        ?>
+        <select name="values[<?=$field;?>]"></textarea>
+        <?
+                break;
+                case 'date':
+        ?>
+        <span class="dateInput" style="cursor: pointer;" id="<?=$field;?>Container">
+        <span id="<?=$field;?>Show">&nbsp;</span>
+        <input type="hidden" name="values[<?=$field;?>]" id="<?=$field;?>"/>
+        <?
+                break;
+            }
+        ?>
+    </div>
     <? } ?>
 </fieldset>
 <? } ?>
