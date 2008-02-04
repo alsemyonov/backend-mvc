@@ -48,7 +48,7 @@ function usage() {
     echo "USAGE:\n";
     echo "  generate.php create - Create empty project.\n";
     echo "  generate.php doctrine [...] - Call Doctrine_Task.\n";
-    echo "  generate.php apply - Apply migrations to a database.\n";
+    echo "  generate.php scaffold - Autogenerate manager page.\n";
 }
 
 function createProject() {
@@ -56,36 +56,75 @@ function createProject() {
     xcopy(B_PROJECT_TEMPLATE_DIR, '.');
 }
 
-function callDoctrine($argv, $config) {
+function initDoctrine() {
     require_once B_VENDORS_DIR.'/doctrine/lib/Doctrine.php';
     require_once B_DSN_PROVIDER;
 
     spl_autoload_register(array('Doctrine', 'autoload'));
 
     Doctrine_Manager::connection(getDsn(B_ENV_ID));
+}
+
+function callDoctrine($argv, $config) {
+    initDoctrine();
     $cli = new Doctrine_Cli($config);
     $cli->run($argv);
 }
 
 function scaffold($model) {
+    initDoctrine();
+    Doctrine::loadModels(B_MODEL_DIR);
+
     $model = ucfirst($model);
     require_once B_SCAFFOLD_DIR.$model.'.php';
+
+    $modelObj = new $model;
+    $fields = $modelObj->getTable()->getColumns();
+    $relsObj = $modelObj->getTable()->getRelations();
+
+    foreach($relsObj as $relation) {
+        $relations[$relation->getLocalFieldName()] = array(
+            'table'=>$relation->getTable()->getTableName(),
+            'field'=>$relation->getForeignFieldName(),
+            'relType'=>$relation->isOneToOne()
+        );
+    }
+
+    foreach($fields as $id=>$field){
+        if (!$relations[$id]) {
+            $columns[$id] = array(
+                'type'=>$field['type'],
+                'length'=>$field['length']
+            );
+        } else {
+            $columns[$id]['type'] = 'select';
+            $columns[$id]['relation'] = $relations[$id];
+        }
+    }
 
     $config = array(
         'pageId'=>strtolower($model),
         'pageClass'=>$model,
-        'modelClass'=>$model
+        'modelClass'=>$model,
+        'columns'=>$columns
     );
 
-    $config = array_merge($config, $scaffold);
+    $config = array_merge_recursive($config, $scaffold);
+
+    if (!class_exists($model)) {
+        die ('Model class does not exists');
+    }
 
     $js  = phpTpl(B_SCAFFOLD_DIR.'templates/page_js.php', $config);
     $php = phpTpl(B_SCAFFOLD_DIR.'templates/page_php.php', $config);
     $xsl = phpTpl(B_SCAFFOLD_DIR.'templates/page_xsl.php', $config);
 
-//    file_put_contents(B_CONTROLLER_DIR.$model.'Controller.php', $php);
-//    file_put_contents(B_VIEW_DIR.$model.'_index.xsl', $xsl);
-    file_put_contents(B_JS_DIR.$model.'.js', $js);
+    file_put_contents('js', $js);
+    file_put_contents('xsl', $xsl);
+
+//    file_put_contents(B_CONTROLLER_DIR.$prefix.$model.'Controller.php', $php);
+//    file_put_contents(B_VIEW_DIR.$prefix.$model.'_index.xsl', $xsl);
+//    file_put_contents(B_JS_DIR.$model.'.js', $js);
 }
 
 function phpTpl($file, $vars)

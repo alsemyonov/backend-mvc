@@ -1,27 +1,32 @@
 <?
 $scaffold = array(
+    'prefix'=>'',
+    'projectName'=>'Project',
     'formTitle'=>'Пример',
     'pageTitle'=>'Пример',
     'columns'=>array(
-        array(
-            'id'=>'id',
+        'id'=>array(
             'title'=>'ID',
-            'show'=>true
+            'isColumn'=>true
         ),
-        array(
-            'id'=>'name',
-            'title'=>'Name',
-            'show'=>true
+        'name'=>array(
+            'title'=>'Name'
         ),
-        array(
-            'id'=>'surname',
+        'surname'=>array(
             'title'=>'Surname'
+        ),
+        'category_id'=>array(
+            'title'=>'Category',
+            'relation'=>array(
+                'labelField'=>'title'
+            )
         )
     ),
+
     'sets'=>array(
         array(
             'legend'=>'Основное',
-            'fields'=>array('id', 'name', 'surname')
+            'fields'=>array('id', 'name', 'surname', 'category_id')
         )
     )
 );

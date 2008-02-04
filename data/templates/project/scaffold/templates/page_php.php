@@ -1,5 +1,5 @@
 <?= "<?php\n";?>
-class <?= $controllerClass; ?> extends AjaxControllerBase
+class <?= $prefix.$controllerClass; ?> extends AjaxControllerBase
 {
     function __construct()
     {
