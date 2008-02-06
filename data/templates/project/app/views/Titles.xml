@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="Windows-1251"?>
+<titles>
+    <item url="/">
+        <title>Архив дистрибутивов для клиентов Студии RockBee Design</title>
+        <description></description>
+        <keywords></keywords>
+    </item>
+    <item url="/login/">
+        <title>Архив дистрибутивов для клиентов Студии RockBee Design</title>
+        <description></description>
+        <keywords></keywords>
+    </item>
+<!--
+    <item url="/">
+        <title></title>
+        <description></description>
+        <keywords></keywords>
+    </item>
+-->
+</titles>

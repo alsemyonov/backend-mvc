@@ -5,21 +5,15 @@ require_once 'Backend-dev/Mvc/Mvc.php';
 
 
 /********************  Application *******************/
-/* Models */
-#require_once 'models/rBaseModel.php';
-#require_once 'models/rUserModel.php';
-
 /* Components, Helpers */
-#require_once 'controllers/Flash.php';
-#require_once 'controllers/Auth.php';
-#require_once 'views/helpers/bDateHelper.php';
-
-/* Controllers */
-#require_once 'controllers/application.php';
-#require_once 'controllers/rSessionsController.php';
-#require_once 'controllers/rUsersController.php';
+require_once 'controllers/BaseController.php';
+require_once 'controllers/client/IndexController.php';
+require_once 'controllers/manager/AjaxControllerBase.php';
+require_once 'controllers/manager/ManagerController.php';
 
 include B_APP . 'database.php';
+
+include B_APP . 'config.php';
 
 class Application extends Backend_Mvc
 {
@@ -37,6 +31,8 @@ class Application extends Backend_Mvc
         }
 
         self::$db = getDsn('development');
+
+        $routes = new Backend_Mvc_Routes();
 
         include B_APP . 'routes.php';
 

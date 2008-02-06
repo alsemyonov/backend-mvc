@@ -14,15 +14,6 @@ class AjaxControllerBase extends IndexController
         return compact('id', 'query', 'conditions', 'page');
     }
 
-    function get($req, $args)
-    {
-        extract($this->_parseParameters($req, $args));
-
-        $result = $this->retreive($id, $query);
-        unset($result['row']['password']);
-        return $result;
-    }
-
     function getall($req, $args)
     {
         return $this->model->retrieve('all', $this->_parseParameters($req, $args));
