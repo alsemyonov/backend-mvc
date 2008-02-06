@@ -1,7 +1,16 @@
 <?php
 
+$clientGroup = $routes->create();
+$managerGroup = $routes->create();
+
 $routes->add()
     ->using($clientGroup)
     ->url('/')
-    ->action('rIndexController', 'index')
-    ->view(B_APP.'views/index.xsl');
+    ->action('IndexController', 'index')
+    ->view(B_APP.'views/client/index.xsl');
+
+$routes->add()
+    ->using($managerGroup)
+    ->url('/manager/')
+    ->action('ManagerController', 'index')
+    ->view(B_APP.'views/manager/index.xsl');

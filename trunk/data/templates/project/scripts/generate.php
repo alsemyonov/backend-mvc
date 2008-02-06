@@ -31,6 +31,7 @@ switch($action) {
 
     case 'doctrine':
         array_shift($argv);
+        array_unshift($argv, 'doctrine');
         callDoctrine($argv, $config);
     break;
 
@@ -67,6 +68,7 @@ function initDoctrine() {
 
 function callDoctrine($argv, $config) {
     initDoctrine();
+
     $cli = new Doctrine_Cli($config);
     $cli->run($argv);
 }
