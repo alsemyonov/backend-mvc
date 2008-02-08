@@ -1,0 +1,100 @@
+* {margin:0; padding:0;}
+body {background-color: #fff; color: #333; width: 100%; margin: 0; padding: 0; font-family: Arial, Verdana, Geneva, Helvetica, sans-serif;}
+table {border: 0px; /*border-collapse: collapse;*/}
+table td {padding: 0px;}
+
+.logo {background-color: #000; padding: 18px 12px 6px 12px;}
+
+a:link {color: #3366CC;}
+a:visited {color: #666699;}
+a:hover, a:active {color: #FF6600;}
+a.white:link, a.white:visited, a.white:hover, a.white:active {color: #fff;}
+a.active:focus, a.active:active {outline: 0; -moz-outline: none;}
+
+a.logout:link, a.logout:visited {float: right; display: block; width: 21px; height: 11px; margin: 2px 12px 0 0; text-decoration: none; background: url(/images/logout.gif) no-repeat scroll 0 0;}
+a.logout:hover, a.logout:active {float: right; display: block; width: 21px; height: 11px; margin: 2px 12px 0 0; text-decoration: none; background: url(/images/logout.gif) no-repeat scroll 0 -11px;}
+
+.navBlock {clear: both; width: 100%; background-color: #000; padding: 0.35em 0 0 0; border-top: 1px solid #333;}
+ul.mainnav {display: block; width: 100%; height: 1.2em; list-style: none; padding: 0; margin: 0;}
+ul.mainnav li {float: left; margin: 0; padding: 0 4px 0.25em 12px; color: #fff; font-size: 75%; font-weight: normal; line-height: 100%;}
+ul.mainnav li.chosen {float: left; margin: 0; padding: 0 4px 0.25em 12px; color: #fff; font-size: 75%; font-weight: bold; line-height: 100%;}
+.sbnavBlock {clear: both; border-bottom: 1px solid #000; background-color: #f8f8f8; padding: 0 0 0.2em 0;}
+ul.subnav {display: block; width: 100%; height: 1.2em; list-style: none; padding: 0; margin: 0;}
+ul.subnav li {float: left; margin: 0; padding: 0.4em 4px 0px 12px; color: #333; font-size: 75%; font-weight: normal; line-height: 100%;}
+ul.subnav li.chosen {float: left; margin: 0; padding: 0.4em 4px 0px 12px; color: #333; font-size: 75%; font-weight: bold; line-height: 100%;}
+
+h1 {font-size: 151%; font-weight: normal; color: #232323; margin: 20px 0px 8px 0px;}
+h1.index {font-size: 151%; font-weight: normal; color: #232323; margin: 20px 3% 8px 3%;}
+h2 {font-size: 100%; font-weight: bold; color: #666; margin: 0 0 8px 0;}
+h2.nheader {font-size: 80%; font-weight: bold; line-height: 123%; color: #666666; padding: 0px 0px 0px 0px; margin: 8px 0px 8px 0px;}
+
+.common {font-size: 80%; line-height: 110%; font-weight: normal; color: #333;}
+p {margin: 0.5em 0 1em 0;}
+p.br {margin: 0 0 0 0;}
+
+form {margin: 0; padding: 0;}
+input, textarea {font-size: 100%; font-family: Arial, Verdana, Geneva, Helvetica, sans-serif;}
+
+form fieldset {padding: 0 12px 6px 12px; margin: 0 0 4px 0; border: 1px solid #999;}
+form div {display: block; clear: left; padding: 4px 0 4px 0;}
+form label {display: block; float: left; padding: 2px 18px 0 4px; width: 150px; font-size: 70%; color: #333;}
+* html form label {padding: 0 18px 0 9px;}
+form input, form textarea, form select {font-size: 75%; padding: 1px; width: 472px;}
+* html form input, * html form textarea, * html form select {width: 480px;}
+form input.checks {margin-top: 4px; width: auto;}
+form input.submit {width: auto; margin-right: 4px;}
+* html form input.submit {padding: 1px 0 0 0;}
+form legend {color: #232323; padding: 0 4px 0 4px; font-size: 80%; font-weight: bold;}
+* html form legend {padding: 0 2px 0 2px;}
+dt input, dt select, dl input, dl select {width: auto; margin-right: 4px;}
+dt a {font-size: 70%; margin-left: 4px;}
+
+.imgCtn {padding-left: 172px;}
+* html .imgCtn {padding-left: 153px;}
+.imgCtn img {border: 1px solid #a5acb2; padding: 4px;}
+
+.tbl {border-top: 1px solid #ccc; margin: 12px 3% 18px 3%; padding: 0; background-color: #f8f8f8;}
+* html .tbl {width: 100%;}
+.tblPopup {border: 4px solid #ddd; padding: 0; margin: 0 0 0 -350px;}
+* html .tblPopup {position: relative;}
+.tblInner {border: 1px solid #999; background-color: #f8f8f8; padding: 12px 12px 6px 12px;}
+* html .tblPopup {width: 100%;}
+.close {float: right; margin-top: -4px;}
+
+table.listTb th {text-align: left; padding: 2px 12px 2px 4px; background-color: #999; font-size: 75%; font-weight: normal; color: #fff;}
+table.listTb td {padding: 6px 12px 4px 4px; background-color: #f8f8f8; font-size: 75%; font-weight: normal; color: #333; border-bottom: 1px solid #ddd;}
+table.listTb td input {font-size: 100%;}
+
+#editFormDiv {position: absolute; top: 100px; left: 50%; padding-bottom: 30px;}
+.w700 {width: 700px;}
+
+a.ajax:link, a.ajax:visited {text-decoration: none; color: #3366CC; border-bottom: 1px dashed #3366CC;}
+a.ajax:hover, a.ajax:active {color: #FF6600; border-bottom: 1px dashed #FF6600;}
+
+.dateInput {background: url(/images/calendar.gif) no-repeat scroll center left; padding: 4px 0 4px 30px; font-size: 75%;}
+
+.overlay {display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #fff; z-index: 100; -moz-opacity: 0.5; opacity: 0.5; filter: alpha(opacity=50);}
+.loader {text-align: center; display: block; position: absolute; top: 50%; left: 50%; width: 60px; height: 60px; padding: 0; margin: -30px 0 0 -30px; background-color: #fff; z-index: 101; overflow: auto;}
+.loader p {color: #999; font-size: 70%; line-height: 100%; padding: 8px 0 0 0; margin: 0;}
+#error {position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #fff; z-index: 102; -moz-opacity: 1.0; opacity: 1.0; filter: alpha(opacity=100);}
+#errorText {border: 1px solid #999; width: 90%; height: 400px; padding: 4px; margin: 8px 5% 4px 5%; background-color: #fff; overflow: auto;}
+#errorMessage {background-color: red; color: #fff; font-size: 80%; text-align: center; width: 100%; padding: 8px 0 8px 0; margin: 0 0 0 0;}
+.options {margin: 0 5% 12px 5%;}
+
+.pageNav {clear: both; padding: 3px 0 4px 4px; margin: 0; font-size: 80%; line-height: 120%; color: #444; font-weight: normal;}
+/*
+.pageNav span {margin: 0 4px 0 4px;}
+*/
+.pageNav a {display: block; float: left; margin: 0 4px 0 4px;}
+.pageNav span.digits {margin: 0 20px 6px 0; white-space: nowrap; display: block; float: left;}
+.pageNav select {margin: 2px 4px 0 0;}
+.pageNav input {margin: 2px 0 0 0;}
+* html .pageNav input {font-size: 90%;}
+.pageNav span.chosen {display: block; float: left; margin: -3px 1px 0 1px; font-weight: bold; padding: 1px 3px 0 3px; color: #444; border-top: 2px solid #ccc;}
+.pageNav span.hellip {display: block; float: left; margin: 0 4px 0 4px; color: #444;}
+* html .pageNav span.chosen {position: relative;}
+.pageNav span.small {margin: 0 4px 0 0; font-size: 90%; color: #666; display: block; float: left;}
+
+.clearing {clear: both;}
+
+.copyrights {padding: 12px 0px 12px 12px; font-size: 70%; color: #333; border-top: 1px solid #ccc; background-color: #fff;}

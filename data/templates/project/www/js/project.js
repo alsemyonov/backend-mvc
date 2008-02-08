@@ -1,4 +1,4 @@
-var Rockbee = {
+var Real = {
     containerTemplates: { 
         editLink: function (v, row) { v = v||'&mdash; отсутствует &mdash;';return '<a href="#edit:' + row.id + '" onclick="javascript: page.edit({id:' + row.id + '});">'+v+'</a>'; },
         edit: function (v, row) { return '<a href="#edit:' + row.id + '" onclick="javascript: page.edit({id:' + row.id + '});">Изменить</a>'; },
@@ -6,5 +6,5 @@ var Rockbee = {
     }
 };
 
-Rockbee.Page = Class.create(Backend.Manager, {
+Real.Page = Class.create(Backend.Manager, {
 });

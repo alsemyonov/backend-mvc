@@ -53,6 +53,7 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
 
     /**
      * Do actions. Returns View.
+     * @todo controller class provider.
      */
     protected function run($item, $matches, $request, $response)
     {
@@ -60,8 +61,14 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
         $pass2view = array();
 
         $action = $item->getAction();
-
         $controllerClass = $action[0];
+
+        if (!class_exists($controllerClass)) {
+            if (file_exists('../app/controllers/'.$controllerClass.'.php')) require_once '../app/controllers/'.$controllerClass.'.php';
+            if (file_exists('../app/controllers/manager/'.$controllerClass.'.php')) require_once '../app/controllers/manager/'.$controllerClass.'.php';
+            if (file_exists('../app/controllers/client/'.$controllerClass.'.php')) require_once '../app/controllers/client/'.$controllerClass.'.php';
+        }
+
         $action = $action[1];
         $controller = new $controllerClass();
         if (!is_callable(array($controller, $action)));

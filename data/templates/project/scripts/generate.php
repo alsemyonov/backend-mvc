@@ -121,12 +121,9 @@ function scaffold($model) {
     $php = phpTpl(B_SCAFFOLD_DIR.'templates/page_php.php', $config);
     $xsl = phpTpl(B_SCAFFOLD_DIR.'templates/page_xsl.php', $config);
 
-    file_put_contents('js', $js);
-    file_put_contents('xsl', $xsl);
-
-//    file_put_contents(B_CONTROLLER_DIR.$prefix.$model.'Controller.php', $php);
-//    file_put_contents(B_VIEW_DIR.$prefix.$model.'_index.xsl', $xsl);
-//    file_put_contents(B_JS_DIR.$model.'.js', $js);
+    file_put_contents(B_CONTROLLER_DIR.$model.'ManagerController.php', $php);
+    file_put_contents(B_VIEW_DIR.$model.'_index.xsl', $xsl);
+    file_put_contents(B_JS_DIR.$model.'.js', $js);
 }
 
 function phpTpl($file, $vars)

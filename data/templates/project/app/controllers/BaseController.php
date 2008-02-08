@@ -3,12 +3,13 @@ class BaseController
 {
     function createView($ret, $viewName, $req) {
         $accept = $req->getHeader('Accept');
-        if (strpos($accept, 'text/javascript') != FALSE) {
+        if (strpos($accept, 'text/javascript') !== false) {
             $view = new Backend_Mvc_View_Json();
+            return $view->setHash($ret);
         } else {
             $view = new Backend_Mvc_View_TemplateXslt();
+            return $view->fromHash($ret)->resolve($viewName);
         }
-        return $view->fromHash($ret)->resolve($viewName);
     }
 
     function ajax($req, $res, $args)

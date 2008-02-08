@@ -1,5 +1,5 @@
 <?php
-class AjaxControllerBase extends IndexController
+class AjaxControllerBase extends BaseController
 {
     var $model;
 
@@ -16,12 +16,12 @@ class AjaxControllerBase extends IndexController
 
     function getall($req, $args)
     {
-        return $this->model->retrieve('all', $this->_parseParameters($req, $args));
+        return $this->retreive('all', $this->_parseParameters($req, $args));
     }
 
     function getlist($req, $args) 
     {
-        return $this->model->retrieve('list', $this->_parseParameters($req, $args));
+        return $this->retreive('list', $this->_parseParameters($req, $args));
     }
 
     function get($req, $args)
@@ -36,7 +36,7 @@ class AjaxControllerBase extends IndexController
     function retreive($id, $query)
     {
         return array(
-            'values' => $this->model->get($id)
+            'values' => Application::$db->query('FROM User u')
         );
     }
 
