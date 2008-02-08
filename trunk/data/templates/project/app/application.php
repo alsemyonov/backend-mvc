@@ -11,6 +11,11 @@ require_once 'controllers/client/IndexController.php';
 require_once 'controllers/manager/AjaxControllerBase.php';
 require_once 'controllers/manager/ManagerController.php';
 
+require_once '../vendors/doctrine/lib/Doctrine.php';
+spl_autoload_register(array('Doctrine', 'autoload'));
+
+require_once 'models/User.php';
+
 include B_APP . 'database.php';
 
 include B_APP . 'config.php';
@@ -30,7 +35,8 @@ class Application extends Backend_Mvc
             session_start();
         }
 
-        self::$db = getDsn('development');
+        self::$db = Doctrine_Manager::connection(getDsn('devel'));
+        Doctrine::loadModels('../app/models/');
 
         $routes = new Backend_Mvc_Routes();
 

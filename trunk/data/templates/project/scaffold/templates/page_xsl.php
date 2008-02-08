@@ -7,7 +7,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
 >
 
-<xsl:import href="Common.xsl"/>
+<xsl:import href="../layouts/manager.xsl"/>
 
 <xsl:output
     encoding="UTF-8"
@@ -15,21 +15,12 @@
     indent="yes"
 />
 
-<xsl:template match="/*[1]">
-<html>
-
-<xsl:call-template name="head"/>
-<script src="/site/js/<?= $pageId; ?>.js"></script>
-
-<body>
-
-<xsl:call-template name="header"/>
-
+<xsl:template name="content">
 <div class="sbnavBlock"><ul class="subnav">
-	<li><nobr><a href="#" onclick="javascript:page.edit(); return false;">Добавить</a></nobr></li>
+    <li><nobr><a href="#" onclick="javascript:page.edit(); return false;">Добавить</a></nobr></li>
 </ul></div>
 
-<h1 class="index"><?= $pageTitle; ?></h1>
+<h1 class="index"><?= $list['title']; ?></h1>
 
 <div class="tbl">
 
@@ -51,12 +42,11 @@
 <thead>
 <tr>
 <?
-foreach($columns as $columnId=>$column) {
-    if ($column['isColumn']) {
+foreach($list['columns'] as $id) {
+    $column = $columns[$id];
 ?>
     <th width="3%"><?=$column['title'];?></th>
 <?
-    }
 }
 ?>
 </tr>
@@ -72,16 +62,16 @@ foreach($columns as $columnId=>$column) {
 <form action="/manager/<?= $pageId; ?>/ajax/save/" method="post" enctype="multipart/form-data" id="<?=$pageId;?>">
 <div class="tblPopup w700"><div class="tblInner">
 <div class="close"><a href="#" onClick="javascript:page.close(); return false;"><img src="/images/close.gif" width="16" height="16" border="0" alt="" /></a></div>
-<h2><?= $formTitle; ?></h2>
+<h2><?= $form['title']; ?></h2>
 <input type="hidden" name="id"/>
-<? foreach($sets as $set) { ?>
+<? foreach($form['sets'] as $set) { ?>
 <fieldset>
-	<legend><?= $set['legend'];?></legend>
+    <legend><?= $set['legend'];?></legend>
     <? foreach ($set['fields'] as $field) {
         $column = $columns[$field];
     ?>
-	<div>
-		<label><?= $column['title']; ?></label>
+    <div>
+        <label><?= $column['title']; ?></label>
         <?
             switch($column['type']) {
                 case 'string':
@@ -118,17 +108,12 @@ foreach($columns as $columnId=>$column) {
 </fieldset>
 <? } ?>
 <div>
-	<input type="submit" class="submit" name="save" value="Сохранить" onClick="javascript:page.save(); return false;" />
-	<input type="submit" class="submit" name="insert" value="Отмена" onClick="javascript:page.close(); return false;" />
+    <input type="submit" class="submit" name="save" value="Сохранить" onClick="javascript:page.save(); return false;" />
+    <input type="submit" class="submit" name="insert" value="Отмена" onClick="javascript:page.close(); return false;" />
 </div>
 </div></div>
 </form>
 </div>
-
-<xsl:call-template name="footer"/>
-
-</body>
-</html>
 </xsl:template>
 
 </xsl:stylesheet>

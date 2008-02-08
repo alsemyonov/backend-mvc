@@ -50,10 +50,12 @@
     <script src="/js/vendors/prototype/prototype.js"></script>
     <script src="/js/vendors/backend/backend-prototype.js"></script>
     <script src="/js/vendors/backend/backend-date.js"></script>
-    <script src="/js/vendors/backend/backend-manager.js"></script>
     <script src="/js/vendors/backend/backend-ajax.js"></script>
     <script src="/js/vendors/tablekit-fix/fastinit.js"></script>
+    <script src="/js/backend-manager.js"></script>
     <script src="/js/project.js"></script>
+
+    <script src="/js/User.js"></script>
 
     <!--link rel="stylesheet" type="text/css" href="/calendar.css"/>
     <script type="text/javascript" src="/lib/calendar/calendar.js"></script>
@@ -68,7 +70,7 @@
     ШАПКА С НАВИГАЦИЕЙ 
 -->
 <xsl:template name="header">
-<div id="loading" style="display: none;" class="overlay"><div class="loader"><img src="/images/loader.gif" width="32" height="32" border="0" alt="" /><p>Загрузка&#8230;</p></div></div>
+<div id="loading" style="display: none;" class="overlay"><div class="loader"><img src="/img/loader.gif" width="32" height="32" border="0" alt="" /><p>Загрузка&#8230;</p></div></div>
 <div id="error" style="display: none;">
     <form action="." method="post">
     <div id="errorMessage">Оппа, бля! Ошибка [<a href="#" onClick="Element.hide('error'); return false;" class="white">Закрыть этот стыд-позор</a>]</div>

@@ -1,32 +1,38 @@
 <?
 $scaffold = array(
-    'prefix'=>'',
-    'projectName'=>'Project',
-    'formTitle'=>'ЏаЁ¬Ґа',
-    'pageTitle'=>'ЏаЁ¬Ґа',
+    'prefix'=>'re',
+    'projectName'=>'Real',
+
     'columns'=>array(
         'id'=>array(
-            'title'=>'ID',
-            'isColumn'=>true
+            'title'=>'ID'
         ),
-        'name'=>array(
-            'title'=>'Name'
+        'login'=>array(
+            'title'=>'Логин'
         ),
-        'surname'=>array(
-            'title'=>'Surname'
+        'password'=>array(
+            'title'=>'Пароль'
         ),
-        'category_id'=>array(
-            'title'=>'Category',
-            'relation'=>array(
-                'labelField'=>'title'
-            )
+        'email'=>array(
+            'title'=>'E-mail'
+        ),
+        'status'=>array(
+            'title'=>'Статус'
         )
     ),
 
-    'sets'=>array(
-        array(
-            'legend'=>'Ћб­®ў­®Ґ',
-            'fields'=>array('id', 'name', 'surname', 'category_id')
+    'list'=>array(
+        'title'=>'Пользователи',
+        'columns'=>array('id', 'login', 'email', 'status')
+    ),
+
+    'form'=>array(
+        'title'=>'Пользователь',
+        'sets'=>array(
+            array(
+                'legend'=>'Основное',
+                'fields'=>array('id', 'login', 'email', 'password', 'status')
+            )
         )
     )
 );
