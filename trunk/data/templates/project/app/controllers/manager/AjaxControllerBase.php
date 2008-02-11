@@ -2,6 +2,7 @@
 class AjaxControllerBase extends BaseController
 {
     var $model;
+    var $cName;
 
     function _parseParameters($req, $args) 
     {
@@ -16,12 +17,7 @@ class AjaxControllerBase extends BaseController
 
     function getall($req, $args)
     {
-        return $this->retreive('all', $this->_parseParameters($req, $args));
-    }
-
-    function getlist($req, $args) 
-    {
-        return $this->retreive('list', $this->_parseParameters($req, $args));
+        return $this->retreive(null, $this->_parseParameters($req, $args));
     }
 
     function get($req, $args)
@@ -35,42 +31,36 @@ class AjaxControllerBase extends BaseController
 
     function retreive($id, $query)
     {
-        return array(
-            'values' => Application::$db->query('FROM User u')
-        );
-    }
-
-
-    function onBeforeSave($id, &$row, $query, $req, $args)
-    {
-    }
-
-    function onBeforeCreate(&$row, $query, $req, $args)
-    {
-    }
-
-    function onBeforeUpdate($id, &$row, $query, $req, $args)
-    {
-    }
-
-    function onAfterCreate($id, $row, $query, $req, $args)
-    {
-        return array('result'=>$id);
-    }
-
-    function onAfterUpdate($id, $row, $query, $req, $args)
-    {
-        return array('result'=>$id);
-    }
-
-    function onAfterSave($id, $row, $query, $req, $args)
-    {
-        return array('result'=>$id);
+        if (!$id) {
+            return array(
+                'items' => Application::$db->query('FROM '.$this->cName.' u')->toArray()
+            );
+        } else {
+            $item = Application::$db->query('FROM '.$this->cName.' u WHERE id = ?', array($id))->toArray();
+            $item = $item[0];
+            return array(
+                'values' => $item
+            );
+        }
+            
     }
 
     function save($req, $args)
     {
         $query = $req->getQuery();
+        $id = $query['id'];
+        $values = $query['values'];
+        if ($id) {
+            $q = new Doctrine_Query();
+            $model = $q->from($this->cName)->where('id = ?')->fetchOne(array($id));
+        } else {
+            $model = $this->model;
+        }
+        $model->fromArray($values);
+        $model->save();
+        return 1;
+
+/*        $query = $req->getQuery();
         $id = $query['id'];
         $values = $query['values'];
 
@@ -87,16 +77,9 @@ class AjaxControllerBase extends BaseController
         }
         $this->onAfterSave($id, $values, $query, $req, $args);
         
-        return $result;
+        return $result;*/
     }
    
-
-    function getpage($req, $args)
-    {
-        $query = $req->getQuery('page');
-        $page = $query['page'] > 0 ? $query['page'] : 1;
-        return $this->model->getPage($page, 20, null, false);
-    }
 
     function delete($req, $args)
     {
