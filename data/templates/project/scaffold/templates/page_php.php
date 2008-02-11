@@ -1,9 +1,10 @@
 <?= "<?php\n";?>
-class <?= $modelClass.'ManagerController'; ?> extends AjaxControllerBase
+class <?= $modelClassName.'ManagerController'; ?> extends AjaxControllerBase
 {
     function __construct()
     {
-        $this->model = new <?= $modelClass; ?>();
+        $this->model = new <?= $modelClassName; ?>();
+        $this->cName = <?= $modelClassName; ?>;
     }
 }
 ?>

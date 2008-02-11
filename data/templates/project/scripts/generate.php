@@ -77,45 +77,7 @@ function scaffold($model) {
     initDoctrine();
     Doctrine::loadModels(B_MODEL_DIR);
 
-    $model = ucfirst($model);
-    require_once B_SCAFFOLD_DIR.$model.'.php';
-
-    $modelObj = new $model;
-    $fields = $modelObj->getTable()->getColumns();
-    $relsObj = $modelObj->getTable()->getRelations();
-
-    foreach($relsObj as $relation) {
-        $relations[$relation->getLocalFieldName()] = array(
-            'table'=>$relation->getTable()->getTableName(),
-            'field'=>$relation->getForeignFieldName(),
-            'relType'=>$relation->isOneToOne()
-        );
-    }
-
-    foreach($fields as $id=>$field){
-        if (!$relations[$id]) {
-            $columns[$id] = array(
-                'type'=>$field['type'],
-                'length'=>$field['length']
-            );
-        } else {
-            $columns[$id]['type'] = 'select';
-            $columns[$id]['relation'] = $relations[$id];
-        }
-    }
-
-    $config = array(
-        'pageId'=>strtolower($model),
-        'pageClass'=>$model,
-        'modelClass'=>$model,
-        'columns'=>$columns
-    );
-
-    $config = array_merge_recursive($config, $scaffold);
-
-    if (!class_exists($model)) {
-        die ('Model class does not exists');
-    }
+    $config = prepareScaffold($model);
 
     $js  = phpTpl(B_SCAFFOLD_DIR.'templates/page_js.php', $config);
     $php = phpTpl(B_SCAFFOLD_DIR.'templates/page_php.php', $config);
@@ -126,8 +88,84 @@ function scaffold($model) {
     file_put_contents(B_JS_DIR.$model.'.js', $js);
 }
 
-function phpTpl($file, $vars)
-{
+function prepareScaffold($model) {
+    // Название модели - с большой буквы, имя файла должно совпадать.
+    $model = ucfirst($model);
+    require_once B_SCAFFOLD_DIR.$model.'.php';
+
+    // Класс модели должен существовать
+    if (!class_exists($model)) {
+        die ('Model class does not exists');
+    }
+
+    // Загружаем информацию о полях и связях (связь == поле).
+    $modelObj = new $model;
+    $fields = $modelObj->getTable()->getColumns();
+    $relsObj = $modelObj->getTable()->getRelations();
+
+    $relations = array();
+    $columns = array();
+
+    // Превращаем связи в хэш.
+    foreach($relsObj as $relation) {
+        $relations[$relation->getLocalFieldName()] = $relation;
+    }
+
+            //'table'=>$relation->getTable()->getTableName(),
+            //'field'=>$relation->getForeignFieldName(),
+            //'isOneToOne'=>$relation->isOneToOne(),
+            //'relation'=>$relation
+
+    // Цикл по существующим в модели полям
+    foreach($fields as $id=>$field){
+        // Если это не связь, то информация из настроек дополняется информацией из модели.
+        if (!$relations[$id]) {
+            $columns[$id] = array(
+                'type'=>$field['type'],
+                'length'=>$field['length'],
+                'values'=>$field['values'],
+                'default'=>$field['default']
+            );
+        } else {
+            // Если это связь, то тип замещается.
+            $columns[$id]['type'] = 'select';
+            $columns[$id]['relation'] = $relations[$id];
+        }
+    }
+
+    $config = array(
+        'pageId'=>strtolower($model),
+        'pageClassName'=>$model,
+        'modelClassName'=>$model,
+        'columns'=>$columns
+    );
+
+    $config = array_merge_recursive($config, $scaffold);
+   
+    // Подготовка списка для вывода
+    $listHeader = array();
+    $listBody = array();
+
+    foreach($config['list']['columns'] as $id=>$params)
+    {
+        if (is_numeric($id)) $id = $params;
+        if (!is_array($params)) $params = array();
+        
+        $column = $config['columns'][$id];
+        if (!$column) $column = array();
+        $column = array_merge($column, $params);
+        
+        $listHeader[] = $column['title'];
+        $listBody[$id] = $column;
+    }
+    
+    $config['listHeader'] = $listHeader;
+    $config['listBody'] = $listBody;
+    
+    return $config;
+}
+
+function phpTpl($file, $vars) {
     extract($vars);
 
     ob_start();

@@ -1,33 +1,20 @@
 <?
-foreach($columns as $columnId=>$column) {
-    $pairs = array();
-    $column['id'] = $columnId;
+foreach($listBody as $id=>$column) {
+    $pairs = array();   
+    $pairs[] = "id: '".$id."'";
 
     if ($column['type'] == 'date') {
-        $calendars[$columnId] = $column;
+        $calendars[$id] = $column;
     }
 
     if ($column['type'] == 'select') {
-        $selects[$columnId] = $column;
-    }
+        $selects[$id] = $column;
+    }   
+    
+    if ($column['cell']) $pairs[] = 'cellCallback: Project.cellTemplates.'.$column['cell'];
+    if ($column['container']) $pairs[] = 'containerCallback: Project.containerTemplates.'.$column['container'];
+    if ($column['formatter']) $pairs[] = 'formatter: Project.formatters.'.$column['formatter'];
 
-    foreach($column as $key=>$value) {
-        $cnt = false;
-        switch($key) {
-            case 'id':
-                $value = "'".$value."'";
-            break;
-            case 'isColumn':
-            case 'title':
-            case 'type':
-            case 'length':
-            case 'relation':
-                $cnt = true;
-            break;
-        }
-        if ($cnt) continue;
-        $pairs[] = $key.':'.$value;
-    }
     $cTmp[] = '{ '.implode($pairs, ', ').' }';
 }
 $cToShow = implode($cTmp, ",\n");
@@ -67,7 +54,7 @@ if (is_array($selects))
 }
 ?>
 
-<?= $projectName; ?>.<?= $pageClass; ?> = Class.create(Backend.Manager, {
+Project.<?= $pageClassName; ?> = Class.create(Backend.Manager, {
     name: '<?=$pageId;?>',
 
     columns: [
@@ -78,10 +65,10 @@ if (is_array($selects))
         <?= $calToShow; ?>
     ],
 
-    initialize(): function($super) {
+    initialize: function($super) {
         $super();
         <?= $selToShow; ?>
     }
 });
 
-FastInit.addOnLoad(function() {page = new <?= $projectName; ?>.<?= $pageClass; ?>(); });
+FastInit.addOnLoad(function() {page = new Project.<?= $pageClassName; ?>(); });
