@@ -110,5 +110,19 @@ class Backend_Mvc_Request
     {
         return $this->method;
     }
+
+    /**
+     * Returns raw post data.
+     */
+    function getPostData() {
+        return file_get_contents('php://input');
+    }
+
+    /**
+     * Returns json query parsed from raw post data.
+     */
+    function getJsonQuery() {
+        return json_decode($this->getPostData(), true);
+    }
 }
 ?>
