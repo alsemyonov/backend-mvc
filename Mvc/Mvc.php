@@ -2,6 +2,7 @@
 require_once 'PEAR.php';
 require_once 'PEAR/Exception.php';
 
+require_once 'Mvc/Autoloader.php';
 require_once 'Mvc/Request.php';
 require_once 'Mvc/Response.php';
 require_once 'Mvc/RequestDispatcher.php';
@@ -19,6 +20,8 @@ require_once 'Mvc/TemplateRenderer/Php.php';
 require_once 'Mvc/TemplateResolver.php';
 require_once 'Mvc/Controller/Service.php';
 require_once 'Mvc/Controller/Ajax.php';
+
+// @todo Autoloader st. classes
 
 /**
  * Abstract base main class.
