@@ -9,6 +9,7 @@ class Backend_Mvc_Response
     protected $handlers = array();
     protected $encoding = null;
     protected $contentType = null;
+    protected $responseCode = null;
 
     /**
      * Registers output filter.
@@ -21,6 +22,10 @@ class Backend_Mvc_Response
     function setHeader($name, $value)
     {
         $this->headers[$name] = $value;
+    }
+
+    function setResponseCode($code) {
+        $this->responseCode = $code;
     }
 
     function getHeader($name)
@@ -86,6 +91,9 @@ class Backend_Mvc_Response
         if (($this->encoding) || ($this->contentType)) {
             $contentType = $this->contentType ? $this->contentType : 'text/html';
             $this->setHeader('Content-type', $contentType.($this->encoding ? '; charset='.$this->encoding : '' ) );
+        }
+        if ($this->responseCode) {
+            header('HTTP/1.0 '.$this->responseCode);
         }
         foreach($this->getHeaders() as $name=>$header)
         {

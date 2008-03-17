@@ -23,7 +23,7 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
         return array(
             'host'=>$request->getHost(),
             'port'=>$request->getPort(),
-            'query'=>$request->getQuery(),
+            'query'=>$request->getQuery(), 
             'headers'=>$request->getHeaders(),
             'method'=>$request->getMethod(),
             'ip'=>$request->getRemoteAddr()
@@ -43,6 +43,7 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
         if (!$item) {
             $item = $this->routes->find('/404/', &$matches, $this->getRoutesArgs($request));
             if (!$item) {
+                $response->setResponseCode('404 Not Found');
                 return false;
             }
         }
@@ -62,12 +63,6 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
 
         $action = $item->getAction();
         $controllerClass = $action[0];
-
-        if (!class_exists($controllerClass)) {
-            if (file_exists('../app/controllers/'.$controllerClass.'.php')) require_once '../app/controllers/'.$controllerClass.'.php';
-            if (file_exists('../app/controllers/manager/'.$controllerClass.'.php')) require_once '../app/controllers/manager/'.$controllerClass.'.php';
-            if (file_exists('../app/controllers/client/'.$controllerClass.'.php')) require_once '../app/controllers/client/'.$controllerClass.'.php';
-        }
 
         $action = $action[1];
         $controller = new $controllerClass();

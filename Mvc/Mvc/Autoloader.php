@@ -2,24 +2,32 @@
 class Mvc_Autoloader {
     private static $classNames;
 
+    static function register() {
+        spl_autoload_register(array('Mvc_Autoloader', 'autoload'));
+    }
+
+    // Registers class
     static function registerClass($className, $fileName) {
         self::$classNames[$className] = $fileName;
+    }
+
+    static function registerClasses($cn) {
+        foreach($cn as $className=>$file) {
+            self::registerClass($className, $file);
+        }
     }
 
     static function unregisterClass($className) {
         unset(self::$classNames[$className]);
     }
 
-    static function register() {
-        spl_autoload_register(array('Mvc_Autoloader', 'autoload'));
-    }
-
-    static function registerFolder($folder) {
+    // Registers folder
+    static function registerFolder($folder, $namespace = '') {
         $folder = glob($folder.'/*');
         foreach($folder as $fn) {
             $pi = pathinfo($fn);
             $className = $pi['filename'];
-            self::registerClass($className, $fn);
+            self::registerClass($namespace.$className, $fn);
         }
     }
 
@@ -30,4 +38,6 @@ class Mvc_Autoloader {
         }
     }
 }
+
+Mvc_Autoloader::register();
 ?>
