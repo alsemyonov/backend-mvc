@@ -3,25 +3,27 @@ require_once 'PEAR.php';
 require_once 'PEAR/Exception.php';
 
 require_once 'Mvc/Autoloader.php';
-require_once 'Mvc/Request.php';
-require_once 'Mvc/Response.php';
-require_once 'Mvc/RequestDispatcher.php';
-require_once 'Mvc/RequestDispatcherOnRoutes.php';
-require_once 'Mvc/RequestDispatcherOnFiles.php';
-require_once 'Mvc/Routes.php';
-require_once 'Mvc/View.php';
-require_once 'Mvc/View/Json.php';
-require_once 'Mvc/View/Template.php';
-require_once 'Mvc/View/TemplateXslt.php';
-require_once 'Mvc/View/Rss.php';
-require_once 'Mvc/TemplateRenderer.php';
-require_once 'Mvc/TemplateRenderer/Xslt.php';
-require_once 'Mvc/TemplateRenderer/Php.php';
-require_once 'Mvc/TemplateResolver.php';
-require_once 'Mvc/Controller/Service.php';
-require_once 'Mvc/Controller/Ajax.php';
 
-// @todo Autoloader st. classes
+$root = dirname(__FILE__);
+Mvc_Autoloader::registerClasses(array(
+    'Backend_Mvc_Request'=>$root.'/Mvc/Request.php',
+    'Backend_Mvc_Response'=>$root.'/Mvc/Response.php',
+    'Backend_Mvc_RequestDispatcher'=>$root.'/Mvc/RequestDispatcher.php',
+    'Backend_Mvc_RequestDispatcherOnRoutes'=>$root.'/Mvc/RequestDispatcherOnRoutes.php',
+    'Backend_Mvc_RequestDispatcherOnFiles'=>$root.'/Mvc/RequestDispatcherOnFiles.php',
+
+    'Backend_Mvc_Routes'=>$root.'/Mvc/Routes.php',
+
+    'Backend_Mvc_View'=>$root.'/Mvc/View.php',
+    'Backend_Mvc_View_Template'=>$root.'/Mvc/View/Template.php',
+    'Backend_Mvc_View_TemplateXslt'=>$root.'/Mvc/View/TemplateXslt.php',
+    'Backend_Mvc_View_Json'=>$root.'/Mvc/View/Json.php',
+
+    'Backend_Mvc_TemplateRenderer'=>$root.'/Mvc/TemplateRenderer.php',
+    'Backend_Mvc_TemplateResolver'=>$root.'/Mvc/TemplateResolver.php',
+
+    'Backend_Mvc_TemplateRenderer_Xslt'=>$root.'/Mvc/TemplateRenderer/Xslt.php'
+));
 
 /**
  * Abstract base main class.
@@ -90,7 +92,10 @@ class Backend_Mvc
 
         $this->beforeDispatch($request, $response, $dispatcher);
         $view = $dispatcher->dispatch($request, $response);
-        if (!$view) throw new PEAR_Exception('Page not found');
+        if (!$view) {
+            header('HTTP/1.0 404 Not Found');
+            throw new PEAR_Exception('Page not found');
+        }
 
         $this->beforeDisplayView($view);
         $view->show($request, $response);

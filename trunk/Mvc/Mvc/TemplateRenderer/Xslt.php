@@ -74,6 +74,9 @@ class Backend_Mvc_TemplateRenderer_Xslt extends Backend_Mvc_TemplateRenderer
     function format()
     {
         if (!$this->xsltDoc) {
+            if (!file_exists($this->getFileName())) { 
+                throw new Exception('Template file not found found: '.$this->getFileName());
+            }
             $xsltDoc = DOMDocument::load($this->getFileName(), LIBXML_DTDLOAD | LIBXML_NOENT | LIBXML_NSCLEAN);
             $this->setXslt($xsltDoc);
         }
