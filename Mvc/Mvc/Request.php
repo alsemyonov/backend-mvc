@@ -1,8 +1,6 @@
 <?php
 /**
- * Interface to request data.
- *
- * @todo _GET/_POST?
+ * Interface to access request data.
  */
 class Backend_Mvc_Request
 {   
@@ -18,7 +16,7 @@ class Backend_Mvc_Request
 
     /**
      * Constructor. Reads environment variables (request uri, host, etc.)
-     * @todo for IP: proxy handling.
+     * @todo for remote_addrs: proxy handling.
      */
     function __construct()
     {
@@ -120,6 +118,9 @@ class Backend_Mvc_Request
 
     /**
      * Returns json query parsed from raw post data.
+     *
+     * It is very useful trick to transfer data through ajax requests because there is no need to serialize
+     * objects to query string.
      */
     function getJsonQuery() {
         return json_decode($this->getPostData(), true);

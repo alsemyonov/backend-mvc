@@ -1,5 +1,8 @@
 <?
-// @todo !!! Encoding
+/**
+ * JSON view.
+ * @todo Protect from XSS attacks.
+ */
 class Backend_Mvc_View_Json extends Backend_Mvc_View
 {
     protected $data;

@@ -1,5 +1,5 @@
 <?
-class Mvc_Autoloader {
+class Backend_Mvc_Autoloader {
     private static $classNames;
 
     static function register() {
