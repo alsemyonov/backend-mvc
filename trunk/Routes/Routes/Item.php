@@ -89,6 +89,9 @@ class Backend_Routes_Item
      */
     function using($template)
     {
+        if (!is_subclass_of($template, 'Backend_Routes_Item')) {
+            throw new Exception('Template item is not subclass of Routes_Item');
+        }
         $this->params = array_merge($this->params, $template->params);
         $this->cnd    = array_merge($this->cnd, $template->cnd);
         return $this;
