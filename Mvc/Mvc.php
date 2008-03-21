@@ -27,6 +27,7 @@ Mvc_Autoloader::registerClasses(array(
 
 /**
  * Abstract base main class.
+ * @package Mvc
  */
 class Backend_Mvc
 {
