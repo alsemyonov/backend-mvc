@@ -1,6 +1,7 @@
 <?php
 /**
- * Template view.
+ * Template view renderer.
+ * @todo think about to make resolver non-static.
  */
 abstract class Backend_Mvc_View_Template extends Backend_Mvc_View
 {
@@ -13,7 +14,7 @@ abstract class Backend_Mvc_View_Template extends Backend_Mvc_View
      */
     public static function setResolver($resolver)
     {
-        if (!is_callable($resolver));
+        if (!is_callable($resolver)) throw new Backend_Mvc_Exception('Resolver is not callable');
         self::$resolver = $resolver;
     }
 

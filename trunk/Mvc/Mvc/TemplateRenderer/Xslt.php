@@ -2,6 +2,7 @@
 /**
  * Gets XML document or hash as input data.
  * @todo Handle content
+ * @todo load flags == constant/setOptions/getOptions
  */
 class Backend_Mvc_TemplateRenderer_Xslt extends Backend_Mvc_TemplateRenderer
 {

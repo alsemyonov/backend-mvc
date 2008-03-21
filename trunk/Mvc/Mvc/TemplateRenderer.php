@@ -1,6 +1,10 @@
 <?php
 /**
  * Template renderer base class.
+ *
+ * It receives template filename, template content and input data (hash). 
+ *
+ * @todo Strip out getters?
  */
 abstract class Backend_Mvc_TemplateRenderer
 {
@@ -41,7 +45,7 @@ abstract class Backend_Mvc_TemplateRenderer
      */
     public function setFileName($fileName)
     {
-        if (!file_exists($fileName));
+        if (!file_exists($fileName)) throw new Backend_Mvc_Exception('File not found: '.$fileName);
         $this->fileName = $fileName;
     }
 

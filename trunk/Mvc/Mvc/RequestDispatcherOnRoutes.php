@@ -1,6 +1,7 @@
 <?
 /**
  * Standard request dispatcher.
+ * @todo Each dispatcher should be linked to controller's action prototype.
  */
 class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatcher
 {
@@ -24,6 +25,7 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
             'host'=>$request->getHost(),
             'port'=>$request->getPort(),
             'query'=>$request->getQuery(), 
+            'jsonQuery'=>$request->getJsonQuery(),
             'headers'=>$request->getHeaders(),
             'method'=>$request->getMethod(),
             'ip'=>$request->getRemoteAddr()
@@ -31,7 +33,7 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
     }
 
     /**
-     * Returns true if request dispatched and false if request is not dispatched.
+     * Returns view if request has dispatched and false if request is not dispatched.
      *
      * @returns list Result objects and view object or false.
      */
@@ -43,7 +45,7 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
         if (!$item) {
             $item = $this->routes->find('/404/', &$matches, $this->getRoutesArgs($request));
             if (!$item) {
-                $response->setResponseCode('404 Not Found');
+                $response->notFound();
                 return false;
             }
         }

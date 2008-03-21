@@ -1,6 +1,9 @@
 <?php
 /**
+ * Handles response.
  * @todo header functions: lcase.
+ * @todo outputfilter process
+ * @todo output filter throug native methods?
  */
 class Backend_Mvc_Response
 {
@@ -84,6 +87,13 @@ class Backend_Mvc_Response
         if ($force) {
             die();
         }
+    }
+
+    /**
+     * Sets 404 Not Found request header.
+     */
+    function notFound() {
+        $this->setResponseCode('404 Not Found');
     }
 
     function send()
