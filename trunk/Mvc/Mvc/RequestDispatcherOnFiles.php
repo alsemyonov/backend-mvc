@@ -1,6 +1,8 @@
 <?
 /**
- * Standard request dispatcher.
+ * Request dispatching based on files. There are no need for controller to this
+ * dispatcher.
+ * @deprecated
  */
 class Backend_Mvc_RequestDispatcherOnFiles extends Backend_Mvc_RequestDispatcher
 {
@@ -22,7 +24,10 @@ class Backend_Mvc_RequestDispatcherOnFiles extends Backend_Mvc_RequestDispatcher
             $xslFileName = 'views/index.xsl';
         }
 
-        if (!file_exists($xslFileName)) return false;
+        if (!file_exists($xslFileName)) {
+            $response->notFound();
+            return false;
+        }
 
         $view = new Backend_Mvc_View_TemplateXslt();
         if (file_exists($xmlFileName))

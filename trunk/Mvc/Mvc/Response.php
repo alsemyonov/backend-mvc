@@ -1,26 +1,15 @@
 <?php
 /**
- * Handles response.
+ * Response data.
  * @todo header functions: lcase.
- * @todo outputfilter process
- * @todo output filter throug native methods?
  */
 class Backend_Mvc_Response
 {
     protected $out;
     protected $headers = array();
-    protected $handlers = array();
     protected $encoding = null;
     protected $contentType = null;
     protected $responseCode = null;
-
-    /**
-     * Registers output filter.
-     */
-    function addOutputFilter($callback)
-    {
-        $this->handlers[] = $callback;
-    }
 
     function setHeader($name, $value)
     {
@@ -51,18 +40,24 @@ class Backend_Mvc_Response
         return $this->encoding;
     }
 
+    /**
+     * Sets current content-type.
+     */
     function setContentType($contentType)
     {
         $this->contentType = $contentType;
     }
 
+    /**
+     * Gets current content-type.
+     */
     function getContentType()
     {
         return $this->contentType;
     }
 
     /**
-     * "Echo sprintf(...)" to internal output buffer.
+     * Echoes data to internal output buffer.
      */
     function out($str)
     {
@@ -79,14 +74,17 @@ class Backend_Mvc_Response
     }
 
     /**
-     * Redirect function.
+     * Redirects user's browser.
+     * @param bool $force If true, redirecting made immediately, function calls die().
      */
-    function sendRedirect($url, $force = true)
+    function redirect($url, $force = true)
     {
-        header('Location: ' . $url);
         if ($force) {
+            header('Location: ' . $url);
             die();
         }
+
+        $this->setHeader('Location', $url);
     }
 
     /**

@@ -4,25 +4,32 @@ require_once 'PEAR/Exception.php';
 
 require_once 'Mvc/Autoloader.php';
 
-$root = dirname(__FILE__);
-Mvc_Autoloader::registerClasses(array(
-    'Backend_Mvc_Request'=>$root.'/Mvc/Request.php',
-    'Backend_Mvc_Response'=>$root.'/Mvc/Response.php',
-    'Backend_Mvc_RequestDispatcher'=>$root.'/Mvc/RequestDispatcher.php',
-    'Backend_Mvc_RequestDispatcherOnRoutes'=>$root.'/Mvc/RequestDispatcherOnRoutes.php',
-    'Backend_Mvc_RequestDispatcherOnFiles'=>$root.'/Mvc/RequestDispatcherOnFiles.php',
+define(B_ROOT, dirname(__FILE__));
 
-    'Backend_Mvc_Routes'=>$root.'/Mvc/Routes.php',
+Backend_Mvc_Autoloader::registerClasses(array(
+    'Backend_Mvc_Request'=>B_ROOT.'/Mvc/Request.php',
+    'Backend_Mvc_Response'=>B_ROOT.'/Mvc/Response.php',
+    'Backend_Mvc_RequestDispatcher'=>B_ROOT.'/Mvc/RequestDispatcher.php',
+    'Backend_Mvc_RequestDispatcherOnRoutes'=>B_ROOT.'/Mvc/RequestDispatcherOnRoutes.php',
+    'Backend_Mvc_RequestDispatcherOnFiles'=>B_ROOT.'/Mvc/RequestDispatcherOnFiles.php',
 
-    'Backend_Mvc_View'=>$root.'/Mvc/View.php',
-    'Backend_Mvc_View_Template'=>$root.'/Mvc/View/Template.php',
-    'Backend_Mvc_View_TemplateXslt'=>$root.'/Mvc/View/TemplateXslt.php',
-    'Backend_Mvc_View_Json'=>$root.'/Mvc/View/Json.php',
+    'Backend_Mvc_Routes'=>B_ROOT.'/Mvc/Routes.php',
 
-    'Backend_Mvc_TemplateRenderer'=>$root.'/Mvc/TemplateRenderer.php',
-    'Backend_Mvc_TemplateResolver'=>$root.'/Mvc/TemplateResolver.php',
+    'Backend_Mvc_Controller'=>B_ROOT.'/Mvc/Controller.php',
+//    'Backend_Mvc_Controller_CRUD'=>$root.'/Mvc/Controller/CRUD.php',
+//    'Backend_Mvc_Controller_CRUD_Doctrine'=>$root.'/Mvc/Controller/CRUD/Doctrine.php',
 
-    'Backend_Mvc_TemplateRenderer_Xslt'=>$root.'/Mvc/TemplateRenderer/Xslt.php'
+    'Backend_Mvc_View'=>B_ROOT.'/Mvc/View.php',
+    'Backend_Mvc_View_Template'=>B_ROOT.'/Mvc/View/Template.php',
+    'Backend_Mvc_View_Template_Xslt'=>B_ROOT.'/Mvc/View/Template/Xslt.php',
+    'Backend_Mvc_View_Json'=>B_ROOT.'/Mvc/View/Json.php',
+
+    'Backend_Mvc_TemplateRenderer'=>B_ROOT.'/Mvc/TemplateRenderer.php',
+    'Backend_Mvc_TemplateResolver'=>B_ROOT.'/Mvc/TemplateResolver.php',
+
+    'Backend_Mvc_TemplateRenderer_Xslt'=>B_ROOT.'/Mvc/TemplateRenderer/Xslt.php',
+
+    'Backend_Mvc_Exception'=>B_ROOT.'/Mvc/Exception.php'
 ));
 
 /**
@@ -67,13 +74,6 @@ class Backend_Mvc
     }
 
     /**
-     * Called before dispatch results runs.
-     */
-    protected function beforeResultRun($result)
-    {
-    }
-
-    /**
      * Called before view display.
      */
     protected function beforeDisplayView($view)
@@ -82,20 +82,18 @@ class Backend_Mvc
 
     /**
      * Runs request processing.
-     * @todo Dispatch failed.
      */
     public function run()
     {
         $request = $this->createRequest();
         $response = $this->createResponse();
-
         $dispatcher = $this->createDispatcher();
 
         $this->beforeDispatch($request, $response, $dispatcher);
         $view = $dispatcher->dispatch($request, $response);
         if (!$view) {
-            header('HTTP/1.0 404 Not Found');
-            throw new PEAR_Exception('Page not found');
+            $response->notFound();
+            throw new Backend_Mvc_Exception('View was not passed to Backend_Mvc. Page not found?');
         }
 
         $this->beforeDisplayView($view);

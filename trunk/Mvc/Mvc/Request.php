@@ -1,6 +1,7 @@
 <?php
 /**
- * Interface to access request data.
+ * Request data.
+ * @todo Json request variables shoul be loaded once - at startup.
  */
 class Backend_Mvc_Request
 {   
@@ -68,11 +69,30 @@ class Backend_Mvc_Request
     }
 
     /**
-     * Gets query variables (join of GET and POST).
+     * Gets request query variables (join of GET and POST).
      */
-    function getQuery()
+    function getRequestQuery()
     {
         return $this->query;
+    }
+
+    /**
+     * Returns json query parsed from raw post data.
+     *
+     * It is very useful trick to transfer data through ajax requests because there is no need to serialize
+     * objects to query string.
+     */
+    function getJsonQuery() {
+        $a = json_decode($this->getPostData(), true);
+        $a = is_array($a) ? $a : array();
+        return $a;
+    }
+
+    /** 
+     * Returns query (merged GET, POST and Json queries).
+     */
+    public function getQuery() {
+        return array_merge($this->getRequestQuery(), $this->getJsonQuery());
     }
 
     /**
@@ -114,16 +134,6 @@ class Backend_Mvc_Request
      */
     function getPostData() {
         return file_get_contents('php://input');
-    }
-
-    /**
-     * Returns json query parsed from raw post data.
-     *
-     * It is very useful trick to transfer data through ajax requests because there is no need to serialize
-     * objects to query string.
-     */
-    function getJsonQuery() {
-        return json_decode($this->getPostData(), true);
     }
 }
 ?>
