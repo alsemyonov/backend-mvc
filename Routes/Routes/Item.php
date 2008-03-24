@@ -1,6 +1,8 @@
 <?
 /**
  * Элемент списка путей (базовый класс).
+ * @todo ($...) внутри адреса.
+ * @todo skip-маска
  */
 class Backend_Routes_Item
 {
@@ -47,7 +49,7 @@ class Backend_Routes_Item
             $matchNames = $matches[1];
             foreach( $matchNames as $varName )
             {
-                $url = str_replace('($'.$varName.')', '([\w-]+)', $url);            
+                $url = str_replace('($'.$varName.')', '([\w-_.]+)', $url);            
             }
 
             $url = str_replace( '/', '\/', $url );

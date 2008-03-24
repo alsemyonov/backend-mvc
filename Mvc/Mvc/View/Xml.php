@@ -1,5 +1,8 @@
 <?
-// @todo !!! Encoding
+// @todo !!! Encoding?
+/**
+ * XML view.
+ */
 class Backend_Mvc_View_Xml extends Backend_Mvc_View
 {
     protected $data;

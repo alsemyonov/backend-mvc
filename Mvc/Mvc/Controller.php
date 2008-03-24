@@ -1,44 +1,26 @@
 <?php
 /**
- * Base controller class (using it as base Controller class is optional).
+ * Base controller class for DispatcherOnRoutes. Using this class as base is optional.
  *
- * @todo text/javascript: html/javascript and another javascript- MIME. Implement header-view mapping.
- * @todo default view class.
- * @todo change view class for page (args?).
+ * @todo Implement view-by-extension.
  * @todo Backend_Mvc_IHashView
+ * @todo Kill accept, and make extension accept
  */
 class Backend_Mvc_Controller
 {
-    protected $ajaxMethods;
-
     /**
-     * Creates view. Type of a view depends on Accept header.
-     * XsltView for text/html. JsonView for text/javascript.
+     * Action dispatch method. Receives action name from routes argument.
      */
-    function createView($ret, $viewName, $req) {
-        $accept = $req->getHeader('Accept');
-        if (strpos($accept, 'text/javascript') !== false) {
-            $view = new Backend_Mvc_View_Json();
-            return $view->setHash($ret);
-        } else {
-            $view = new Backend_Mvc_View_TemplateXslt();
-            return $view->fromHash($ret)->resolve($viewName);
-        }
-    }
-
-    /**
-     * Ajax dispatch method
-     */
-    function ajax($req, $res, $args)
+    function dispatch($req, $res, $args)
     {      
-        $method = $args['methodName'];
-        if (!$method) $method = array_pop($req->getPathParts());
-        if ($this->ajaxMethods[$method]) $method = $this->ajaxMethods[$method];
+        $action = strtolower($args['action']);
+        if (!$action) $action = array_pop($req->getPathParts());
 
-        if (!method_exists($this, $method)) return false;
-        $r = $this->$method($req, $args);
-
-        return $this->createView($r, $args['view'], $req);
+        if (!method_exists($this, $action)) {
+            $res->notFound();
+            throw new Backend_Mvc_Exception('Page not found: dispatch() could not find corresponding method');
+        }
+        return $this->$action($req, $res, $args);
     }
 
     /**
@@ -46,21 +28,26 @@ class Backend_Mvc_Controller
      */
     function index($req, $res, $args)
     {
-        return $this->createView(array(), $args['view'], $req);
+        return $this->createView(array(), $req, $args);
     }
 
     /**
      * Default authentification function.
+     * Handles http_authorization value if exists.
+     * @todo _REQUEST
+     * @todo Right logout.
      */
-    static function auth($auth) {
-        $cgiAuth = $_REQUEST['http_authorization'];
-        if ($cgiAuth)
-        {
-            $auth = split( ' ', $cgiAuth);
-            $loginPw = split( ':', base64_decode( $auth[1] ) );
+    static function auth($realm) {
+        if ($_REQUEST['http_authorization']) {
+            $cgiAuth = $_REQUEST['http_authorization'];
+            if ($cgiAuth)
+            {
+                $auth = split( ' ', $cgiAuth);
+                $loginPw = split( ':', base64_decode( $auth[1] ) );
             
-            $_SERVER['PHP_AUTH_USER'] = $loginPw[ 0 ];
-            $_SERVER['PHP_AUTH_PW'] = $loginPw[ 1 ];
+                $_SERVER['PHP_AUTH_USER'] = $loginPw[ 0 ];
+                $_SERVER['PHP_AUTH_PW'] = $loginPw[ 1 ];
+            }
         }
 
         if ($_REQUEST['logout']) {
@@ -75,7 +62,7 @@ class Backend_Mvc_Controller
             header('HTTP/1.0 401 Unauthorized');
             die;
         } else {
-            if (($_SERVER['PHP_AUTH_USER'] != $auth) || ($_SERVER['PHP_AUTH_PW'] != $auth))
+            if (($_SERVER['PHP_AUTH_USER'] != $realm[0]) || ($_SERVER['PHP_AUTH_PW'] != $realm[1]))
             {
                 header('WWW-Authenticate: Basic realm="'.$realm.'"');
                 header('HTTP/1.0 401 Unauthorized');

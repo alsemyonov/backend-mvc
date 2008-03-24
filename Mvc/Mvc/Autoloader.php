@@ -1,9 +1,21 @@
 <?
+/** @todo $class = self::getPath() . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php'; */
+
+/**
+ * Autoloader class.
+ * @todo THROUGH INI_SET!!!!
+ */
 class Backend_Mvc_Autoloader {
+    /**
+     * Registered classes.
+     */
     private static $classNames;
 
+    /**
+     * Registers autoload function.
+     */
     static function register() {
-        spl_autoload_register(array('Mvc_Autoloader', 'autoload'));
+        spl_autoload_register(array(self, 'autoload'));
     }
 
     // Registers class
@@ -31,13 +43,17 @@ class Backend_Mvc_Autoloader {
         }
     }
 
-    static function autoload($className) {             
+    /**
+     * Autoloads class. First, checks for existance class in 
+     */
+    static function autoload($className) 
+    {
         if (self::$classNames[$className]) {
-            require_once(self::$classNames[$className]);
+            include_once self::$classNames[$className];
             return true;
         }
     }
 }
 
-Mvc_Autoloader::register();
+Backend_Mvc_Autoloader::register();
 ?>
