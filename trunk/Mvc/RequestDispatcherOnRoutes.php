@@ -4,6 +4,7 @@
  * @todo Each dispatcher should be linked to controller's action prototype.
  * @todo types? vs resolver
  * @todo transfer wants to controller?
+ * @todo setViewTypeClass?
  */
 class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatcher 
 {
@@ -11,10 +12,10 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
      * View classes for different methods.
      */
     protected $viewClasses = array(
-        'json'=>'Backend_Mvc_View_Json',
-        'html'=>'Backend_Mvc_View_Template_Xslt',
-        'rss'=>'Backend_Mvc_View_Rss',
-        'xml'=>'Backend_Mvc_View_Xml'
+        'text/javascript'=>'Backend_Mvc_View_Json',
+        'text/html'=>'Backend_Mvc_View_Template_Xslt',
+        'text/rss'=>'Backend_Mvc_View_Rss',
+        'text/xml'=>'Backend_Mvc_View_Xml'
     );
 
     /**
@@ -80,23 +81,8 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
      * Creates view. View type depends on extension, routes parameter and accept parameter.
      */
     function createView($r, $req, $args) {
-        $method = null;
-
-        if ($args['method']) {
-            $methodArg = $args['method'];
-            if ($this->viewClasses[$methodArg]) {
-                $method = $methodArg;
-            }
-        }
-
-        $accept = $req->getHeader('Accept');
-
-        if (strpos($accept, 'text/javascript') !== false) {
-            $method = 'json';
-        }
-
-        if (!$method) $method = 'html';
-        $viewClass = $this->viewClasses[$method];
+        $mime = $req->wants();
+        $viewClass = $this->viewClasses[$mime];
 
         $view = new $viewClass;
         $view->getRenderer()->setHash($r);

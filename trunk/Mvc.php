@@ -4,7 +4,7 @@ require_once 'PEAR/Exception.php';
 
 require_once 'Mvc/Autoloader.php';
 
-define(B_ROOT, dirname(__FILE__));
+/*define(B_ROOT, dirname(__FILE__));
 
 Backend_Mvc_Autoloader::registerClasses(array(
     'Backend_Mvc_Request'=>B_ROOT.'/Mvc/Request.php',
@@ -30,7 +30,9 @@ Backend_Mvc_Autoloader::registerClasses(array(
     'Backend_Mvc_TemplateRenderer_Xslt'=>B_ROOT.'/Mvc/TemplateRenderer/Xslt.php',
 
     'Backend_Mvc_Exception'=>B_ROOT.'/Mvc/Exception.php'
-));
+));*/
+
+//Backend_Mvc_Autoloader::includeFolder(dirname(__FILE__));
 
 /**
  * Abstract base main class.
@@ -92,7 +94,7 @@ class Backend_Mvc
         $this->beforeDispatch($request, $response, $dispatcher);
         $view = $dispatcher->dispatch($request, $response);
         if (!$view) {
-            $response->notFound();
+            header('HTTP/1.1 404 Not Found');
             throw new Backend_Mvc_Exception('View was not passed to Backend_Mvc. Page not found?');
         }
 
