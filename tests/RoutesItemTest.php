@@ -1,6 +1,6 @@
 <?php
 require_once 'PHPUnit/Framework/TestCase.php';
-require_once '../Routes/Item.php';
+require_once 'Backend/Routes/Item.php';
 
 class RoutesItemTest extends PHPUnit_Framework_TestCase
 {
