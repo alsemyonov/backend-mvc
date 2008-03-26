@@ -66,9 +66,10 @@ class Backend_Mvc_Request
         }
 
         $xrq = $this->getHeader('X-Requested-With');
-        if ($xrq) {
-            $method = 'text/javascript';
+        if ($xrq == 'XMLHttpRequest') {
+            $type = 'text/javascript';
         }
+
         return $type;        
     }
 
