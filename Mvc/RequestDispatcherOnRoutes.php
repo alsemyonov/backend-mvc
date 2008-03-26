@@ -85,10 +85,12 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
         $viewClass = $this->viewClasses[$mime];
 
         $view = new $viewClass;
-        $view->getRenderer()->setHash($r);
 
-        if (is_callable(array($view->getRenderer(), 'setFileName'))) {
+        if (is_callable(array($view, 'getRenderer'))) {
+            $view->getRenderer()->setHash($r);
             $view->getRenderer()->setFileName($args['view']);
+        } else {
+            $view->setHash($r);
         }
 
         return $view;

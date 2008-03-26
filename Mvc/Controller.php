@@ -18,9 +18,9 @@ class Backend_Mvc_Controller
 
         if (!method_exists($this, $action)) {
             $res->notFound();
-            throw new Backend_Mvc_Exception('Page not found: dispatch() could not find corresponding method');
+            throw new Backend_Mvc_Exception('Page not found: dispatch() could not find method for '.$action.' in controller '.get_class($this));
         }
-        return $this->$action($req, $res, $args);
+        return $this->$action($req, $res, $args, $req->getQuery());
     }
 
     /**
