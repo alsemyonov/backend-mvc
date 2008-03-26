@@ -9,6 +9,11 @@
 class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatcher 
 {
     /**
+     * Backend_Mvc_Routes object.
+     */
+    protected $routes;
+
+    /**
      * View classes for different methods.
      */
     protected $viewClasses = array(
@@ -17,11 +22,6 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
         'text/rss'=>'Backend_Mvc_View_Rss',
         'text/xml'=>'Backend_Mvc_View_Xml'
     );
-
-    /**
-     * Backend_Mvc_Routes object.
-     */
-    protected $routes;
 
     /**
      * Attaches routes to dispatcher.
@@ -112,9 +112,9 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
             throw new Backend_Mvc_Exception('Controller: '.$controller.' action '.$action.' is not callable');
         }
 
-        $result = $controller->$action($request, $response, $params);
+        $result = $controller->$action($request, $response, $params, $request->getQuery());
 
-        if (($result instanceOf Backend_Mvc_View) || (!$result)) {
+        if (($result instanceOf Backend_Mvc_View) || (!is_array($result))) {
             return $result;
         }
 
