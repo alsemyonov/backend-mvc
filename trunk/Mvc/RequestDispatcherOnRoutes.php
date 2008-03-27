@@ -111,13 +111,18 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
         $action = $action[1];
         $controller = new $controllerClass();
         if (!is_callable(array($controller, $action))) {
-            throw new Backend_Mvc_Exception('Controller: '.$controller.' action '.$action.' is not callable');
+            throw new Backend_Mvc_Exception('Controller: '.$controllerClass.' action '.$action.' is not callable');
         }
 
         $result = $controller->$action($request, $response, $params, $request->getQuery());
 
         if (($result instanceOf Backend_Mvc_View) || (!is_array($result))) {
             return $result;
+        }
+
+// !!!
+        if (!$params['view']) {
+            $params['view'] = str_replace($controllerClass, 'Controller', '').'_'.$action.'.xsl';
         }
 
         return $this->createView($result, $request, $params);

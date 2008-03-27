@@ -1,6 +1,8 @@
 <?php
 /**
- * Base controller class for DispatcherOnRoutes. Using this class as base is optional.
+ * Base controller class for DispatcherOnRoutes. Using this class as base is optional BUT
+ * in any class method prototypes should be like this controller index method AND
+ * all action() handlers should be public, helper functions and other should be private.
  *
  * @todo Implement view-by-extension.
  * @todo Backend_Mvc_IHashView
@@ -28,7 +30,7 @@ class Backend_Mvc_Controller
      */
     function index($req, $res, $args)
     {
-        return $this->createView(array(), $req, $args);
+        return array();
     }
 
     /**
