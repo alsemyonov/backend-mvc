@@ -2,7 +2,7 @@
 /**
  * Autoloader class.
  */
-class Backend_Mvc_Autoloader {
+class Backend_Autoloader {
     /**
      * Adds folder to include_path.
      */

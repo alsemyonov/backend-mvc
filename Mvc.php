@@ -2,8 +2,6 @@
 require_once 'PEAR.php';
 require_once 'PEAR/Exception.php';
 
-require_once 'Mvc/Autoloader.php';
-
 /*define(B_ROOT, dirname(__FILE__));
 
 Backend_Mvc_Autoloader::registerClasses(array(
