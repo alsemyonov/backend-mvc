@@ -109,6 +109,10 @@ class Backend_RequestDispatcher_Routes extends Backend_RequestDispatcher
             $action = 'index';
         }
 
+        if (!$controllerClass) {
+            throw new Backend_Exception('Controller class is empty');
+        }
+
         $controller = new $controllerClass();
         if (!is_callable(array($controller, $action))) {
             throw new Backend_Exception('Controller: '.$controllerClass.' action '.$action.' is not callable');
