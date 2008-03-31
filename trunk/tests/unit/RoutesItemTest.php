@@ -28,8 +28,8 @@ class RoutesItemTest extends PHPUnit_Framework_TestCase
         $item = new Backend_Routes_Item();
         $item->url('/root/($one)/');
 
-        $item->match('/root/__--()./', &$matches);        
-        $this->assertTrue($matches['one'] == '__--()=.');   
+        $item->match('/root/__--./', &$matches);        
+        $this->assertTrue($matches['one'] == '__--.');   
     }
 
     public function testDot() {
@@ -57,12 +57,21 @@ class RoutesItemTest extends PHPUnit_Framework_TestCase
         $item->match('/root/1.html', &$matches);        
         $this->assertTrue($matches['one'] == '1');
         $this->assertTrue($matches['method'] == 'html');
-       
-        $item->match('/root/1', &$matches);        
+
+        $matches = array();       
+
+        $item->match('/root/1', &$matches);
         $this->assertTrue($matches['one'] == '1');
-        $this->assertTrue($matches['method'] == '');
+        $this->assertTrue($matches['method'] == null);
     }
 
+    public function testMaskAndExt() {
+        $item = new Backend_Routes_Item();
+        $item->url('/root/($one).js');
+
+        $item->match('/root/one.js', &$matches);        
+        $this->assertTrue($matches['one'] == 'one');
+    }
 
 }
 ?>

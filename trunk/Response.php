@@ -3,7 +3,7 @@
  * Response data.
  * @todo header functions: lcase.
  */
-class Backend_Mvc_Response
+class Backend_Response
 {
     protected $out;
     protected $headers = array();
@@ -90,7 +90,8 @@ class Backend_Mvc_Response
     /**
      * Sets 404 Not Found request header.
      */
-    function notFound() {
+    function notFound() 
+    {
         $this->setResponseCode('404 Not Found');
     }
 
