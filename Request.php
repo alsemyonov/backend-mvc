@@ -1,14 +1,26 @@
 <?php
 /**
  * Request data.
+ * @todo set public to all methods.
+ * @todo write comments
+ * @todo correct media-types
+ * @todo mediat-type-table
  */
-class Backend_Mvc_Request
+class Backend_Request
 {   
+    private $extMime = array(
+        'js'=>'application/json',
+        'json'=>'application/json',
+        'xml'=>'text/xml',
+        'html'=>'text/html'
+    );
+
     protected $path;
     protected $pathParts;
     protected $host;
     protected $port;
-    protected $query;
+    protected $httpRequest;
+    protected $jsonRequest;
     protected $post;
     protected $headers;
     protected $remoteAddr;
@@ -24,6 +36,12 @@ class Backend_Mvc_Request
     {
         if (function_exists('getallheaders')) {
             $this->headers = getallheaders();
+            $keys = array_keys($this->headers);
+
+            $keys = array_map(
+                create_function('$k', 'return strtolower($k);'), $keys
+            );
+            $this->headers = array_combine($keys, array_values($this->headers));
         }
 
         $p = parse_url($_SERVER['REQUEST_URI']);
@@ -31,46 +49,47 @@ class Backend_Mvc_Request
         $this->pathParts = split('/', $this->path);
         $this->pathParts = array_filter($this->pathParts, create_function('$el', 'return $el!="";'));
         $this->port = $_SERVER['SERVER_PORT'];
-        $this->query = array_merge($_GET, $_POST);
-        $this->remoteAddr = $_SERVER['REMOTE_ADDR'];
         $this->host = $_SERVER['HTTP_HOST'];
         $this->method = strtoupper($_SERVER['REQUEST_METHOD']);  //? toupper?
+        $this->remoteAddr = $_SERVER['REMOTE_ADDR'];
+
+        $this->httpRequest = array_merge($_GET, $_POST);
         $this->postData = file_get_contents('php://input');
-        $this->wants = $this->determineWants();
+        $a = json_decode($this->getPostData(), true);
+        $this->jsonRequest = is_array($a) ? $a : array();
+
+        $this->request = array_merge($this->getJsonRequest(), $this->getHttpRequest());
+
+        $this->wants = $this->whatHeWants();
     }
 
     /** 
      * Determines client's accept MIME-type.
      */
-    protected function determineWants() 
+    protected function whatHeWants() 
     {
         $type = 'text/html';
 
         $parts = pathinfo($this->path);
         if ($parts['extension']) {
-            switch($parts['extension']) {
-                case 'html':
-                    $type = 'text/html';
-                break;
-                case 'js':
-                case 'json':
-                    $type = 'text/javascript';
-                break;
-                case 'xml':
-                    $type  = 'text/xml';
-                break;
-                case 'rss':
-                    $type = 'text/rss';
-                break;                              
-            }
+            if ($this->extMime[$parts['extension']])
+                return $this->extMime[$parts['extension']];
         }
 
         $xrq = $this->getHeader('X-Requested-With');
-        if ($xrq == 'XMLHttpRequest') {
-            $type = 'text/javascript';
+        if (strtolower($xrq) == strtolower('XMLHttpRequest')) {
+            $type = 'application/json';
         }
 
         return $type;        
+    }
+
+    /**
+     * Returns HTTP method.
+     */
+    public function getMethod() 
+    {
+        return $this->method;
     }
 
     /**
@@ -108,28 +127,23 @@ class Backend_Mvc_Request
     /**
      * Gets request query variables (join of GET and POST).
      */
-    function getRequestQuery()
+    function getHttpRequest()
     {
-        return $this->query;
+        return $this->httpRequest;
     }
 
     /**
-     * Returns json query parsed from raw post data.
-     *
-     * It is very useful trick to transfer data through ajax requests because there is no need to serialize
-     * objects to query string.
+     * Returns result of JSON deserializing raw post data.
      */
-    function getJsonQuery() {
-        $a = json_decode($this->getPostData(), true);
-        $a = is_array($a) ? $a : array();
-        return $a;
+    function getJsonRequest() {
+        return $this->jsonRequest;
     }
 
     /** 
      * Returns query (merged GET, POST and Json queries).
      */
-    public function getQuery() {
-        return array_merge($this->getRequestQuery(), $this->getJsonQuery());
+    public function getRequest() {
+        return $this->request;
     }
 
     /**
@@ -142,11 +156,10 @@ class Backend_Mvc_Request
 
     /**
      * Gets request header by name.
-     *
-     * @todo tolower() for header name and headers name in array.
      */
     function getHeader($name)
     {
+        $name = strtolower($name);
         return $this->headers[$name];
     }
 
@@ -156,14 +169,6 @@ class Backend_Mvc_Request
     function getRemoteAddr()
     {
         return $this->remoteAddr;
-    }
-
-    /**
-     * Returns HTTP method.
-     */
-    function getMethod()
-    {
-        return $this->method;
     }
 
     /**
@@ -178,6 +183,16 @@ class Backend_Mvc_Request
      */
     function wants() {
         return $this->wants;
+    }
+
+    public function getRequestParameter($name, $default = null)
+    {
+        $request = $this->getRequest();
+        if ($request[$name]) {
+            return $request[$name];
+        } else {
+            return $default;
+        }
     }
 
 }

@@ -6,7 +6,7 @@
  * @todo transfer wants to controller?
  * @todo setViewTypeClass?
  */
-class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatcher 
+class Backend_RequestDispatcher_Routes extends Backend_RequestDispatcher 
 {
     /**
      * Backend_Mvc_Routes object.
@@ -17,10 +17,10 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
      * View classes for different methods.
      */
     protected $viewClasses = array(
-        'text/javascript'=>'Backend_Mvc_View_Json',
-        'text/html'=>'Backend_Mvc_View_Template_Xslt',
-        'text/rss'=>'Backend_Mvc_View_Rss',
-        'text/xml'=>'Backend_Mvc_View_Xml'
+        'application/json'=>'Backend_View_Json',
+        'text/html'=>'Backend_View_Template_Xslt',
+        'text/rss'=>'Backend_View_Rss',
+        'text/xml'=>'Backend_View_Xml'
     );
 
     /**
@@ -42,7 +42,7 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
         return array(
             'host'=>$request->getHost(),
             'port'=>$request->getPort(),
-            'query'=>$request->getQuery(), 
+            'request'=>$request->getRequest(), 
             'headers'=>$request->getHeaders(),
             'method'=>$request->getMethod(),
             'ip'=>$request->getRemoteAddr()
@@ -61,8 +61,7 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
         if (!$item) {
             $item = $this->routes->find('/404/', &$matches, $this->getRoutesArgs($request));
             if (!$item) {
-                $response->notFound();
-                return false;
+                throw new Backend_Exception_PageNotFound();
             }
         }
 
@@ -83,12 +82,11 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
     function createView($r, $req, $args) {
         $mime = $req->wants();
         $viewClass = $this->viewClasses[$mime];
-
         $view = new $viewClass;
 
         if (is_callable(array($view, 'getRenderer'))) {
-            $view->getRenderer()->setHash($r);
-            $view->getRenderer()->setFileName($args['view']);
+            $view->getRenderer()->setData($r);
+            $view->getRenderer()->loadFromFile($args['view']);
         } else {
             $view->setHash($r);
         }
@@ -105,18 +103,20 @@ class Backend_Mvc_RequestDispatcherOnRoutes extends Backend_Mvc_RequestDispatche
         $params = array_merge($matches, $item->getParams());
         $pass2view = array();
 
-        $action = $item->getAction();
-        $controllerClass = $action[0];
-
-        $action = $action[1];
-        $controller = new $controllerClass();
-        if (!is_callable(array($controller, $action))) {
-            throw new Backend_Mvc_Exception('Controller: '.$controllerClass.' action '.$action.' is not callable');
+        $controllerClass = $params['controller'];
+        $action = $params['action'];
+        if ($controllerClass && !$action) {
+            $action = 'index';
         }
 
-        $result = $controller->$action($request, $response, $params, $request->getQuery());
+        $controller = new $controllerClass();
+        if (!is_callable(array($controller, $action))) {
+            throw new Backend_Exception('Controller: '.$controllerClass.' action '.$action.' is not callable');
+        }
 
-        if (($result instanceOf Backend_Mvc_View) || (!is_array($result))) {
+        $result = $controller->$action($request, $response, $params, $request->getRequest());
+
+        if (($result instanceOf Backend_View) || (!is_array($result))) {
             return $result;
         }
 
