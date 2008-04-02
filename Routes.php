@@ -31,12 +31,10 @@ class Backend_Routes
         } else if (is_array($item)) {
             $this->items = array_merge($this->items, $item);
         } else if (!$item) {
-            $item = &$this->create();
-
-            $this->items[] = &$item;
+            $item = $this->create();
+            $this->items[] = $item;
+            return $item;
         }
-
-        return $item;
     }
    
     /**

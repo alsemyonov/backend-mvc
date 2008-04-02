@@ -88,7 +88,7 @@ class Backend_RequestDispatcher_Routes extends Backend_RequestDispatcher
             $view->getRenderer()->setData($r);
             $view->getRenderer()->loadFromFile($args['view']);
         } else {
-            $view->setHash($r);
+            $view->setData($r);
         }
 
         return $view;

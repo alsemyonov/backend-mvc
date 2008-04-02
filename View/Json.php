@@ -7,7 +7,7 @@ class Backend_View_Json extends Backend_View
 {
     protected $data;
 
-    function setHash($data)
+    function setData($data)
     {
         $this->data = $data;
         return $this;

@@ -17,7 +17,7 @@ class Backend_Controller
      * @todo _REQUEST
      * @todo Right logout.
      */
-    static function auth($realm) {
+/*    static function auth($realm) {
         if ($_REQUEST['http_authorization']) {
             $cgiAuth = $_REQUEST['http_authorization'];
             if ($cgiAuth)
@@ -49,6 +49,5 @@ class Backend_Controller
                 die;
             }
         }
-    }
-
+    }*/
 }
