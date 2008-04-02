@@ -5,6 +5,7 @@
  * @todo write comments
  * @todo correct media-types
  * @todo mediat-type-table
+ * @todo на хуй убрать переменные
  */
 class Backend_Request
 {   
@@ -17,14 +18,10 @@ class Backend_Request
 
     protected $path;
     protected $pathParts;
-    protected $host;
-    protected $port;
     protected $httpRequest;
     protected $jsonRequest;
     protected $post;
     protected $headers;
-    protected $remoteAddr;
-    protected $method;
     protected $postData;
     protected $wants;
 
@@ -32,8 +29,9 @@ class Backend_Request
      * Constructor. Reads environment variables (request uri, host, etc.)
      * @todo for remote_addrs: proxy handling.
      */
-    function __construct()
+    public function __construct()
     {
+        // lowercase to all header names.
         if (function_exists('getallheaders')) {
             $this->headers = getallheaders();
             $keys = array_keys($this->headers);
@@ -48,10 +46,6 @@ class Backend_Request
         $this->path = $p['path'];
         $this->pathParts = split('/', $this->path);
         $this->pathParts = array_filter($this->pathParts, create_function('$el', 'return $el!="";'));
-        $this->port = $_SERVER['SERVER_PORT'];
-        $this->host = $_SERVER['HTTP_HOST'];
-        $this->method = strtoupper($_SERVER['REQUEST_METHOD']);  //? toupper?
-        $this->remoteAddr = $_SERVER['REMOTE_ADDR'];
 
         $this->httpRequest = array_merge($_GET, $_POST);
         $this->postData = file_get_contents('php://input');
@@ -71,13 +65,14 @@ class Backend_Request
         $type = 'text/html';
 
         $parts = pathinfo($this->path);
+
         if ($parts['extension']) {
-            if ($this->extMime[$parts['extension']])
+            if (isset($this->extMime[$parts['extension']]))
                 return $this->extMime[$parts['extension']];
         }
 
         $xrq = $this->getHeader('X-Requested-With');
-        if (strtolower($xrq) == strtolower('XMLHttpRequest')) {
+        if (strtolower($xrq) == 'xmlhttprequest') {
             $type = 'application/json';
         }
 
@@ -89,7 +84,7 @@ class Backend_Request
      */
     public function getMethod() 
     {
-        return $this->method;
+        return strtoupper($_SERVER['REQUEST_METHOD']);
     }
 
     /**
@@ -113,7 +108,7 @@ class Backend_Request
      */
     function getHost()
     {
-        return $this->host;
+        return $_SERVER['HTTP_HOST'];
     }
 
     /**
@@ -121,7 +116,7 @@ class Backend_Request
      */
     function getPort()
     {
-        return $this->port;
+        return $_SERVER['SERVER_PORT'];
     }
 
     /**
@@ -147,7 +142,7 @@ class Backend_Request
     }
 
     /**
-     * Gets request headers.
+     * Returns request headers.
      */
     function getHeaders()
     {
@@ -155,7 +150,7 @@ class Backend_Request
     }
 
     /**
-     * Gets request header by name.
+     * Returns request header by name.
      */
     function getHeader($name)
     {
@@ -164,11 +159,11 @@ class Backend_Request
     }
 
     /**
-     * Gets remote IP address.
+     * Returns remote IP address.
      */
     function getRemoteAddr()
     {
-        return $this->remoteAddr;
+        return $_SERVER['REMOTE_ADDR'];
     }
 
     /**
@@ -185,6 +180,9 @@ class Backend_Request
         return $this->wants;
     }
 
+    /**
+     * Returns request parameter or default value.
+     */
     public function getRequestParameter($name, $default = null)
     {
         $request = $this->getRequest();
@@ -195,5 +193,12 @@ class Backend_Request
         }
     }
 
+    public function hasFiles()
+    {
+    }
+
+    public function getFile()
+    {
+    }
 }
 ?>

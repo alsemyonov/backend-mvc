@@ -8,7 +8,7 @@ class Backend_Mvc_View_Xml extends Backend_Mvc_View
     protected $data;
     protected $rootElement = 'root';
 
-    function setHash($data)
+    function setData($data)
     {
         $this->data = $data;
         return $this;

@@ -5,10 +5,10 @@ require_once 'PEAR/Exception.php';
 /**
  * Front controller class.
  */
-class Backend_FrontController
+abstract class Backend_FrontController
 {
     /**
-     * Factory method to create request object.
+     * Creates request object (factory method).
      */
     protected function createRequest()
     {
@@ -16,7 +16,7 @@ class Backend_FrontController
     }
 
     /**
-     * Factory method to create response object.
+     * Creates response object (factory method).
      */
     protected function createResponse()
     {
@@ -24,56 +24,56 @@ class Backend_FrontController
     }
 
     /**
-     * Factory method to create request dispatcher.
-     *
-     * By default, it creates Backend_Mvc_RequestDispatcherOnRoutes.
+     * Creates dispatcher object (factory method).
      */
-    protected function createDispatcher()
-    {
-        return new Backend_RequestDispatcher_Routes();
-    }
+    abstract protected function createDispatcher();
 
     /**
      * Called before dispatcher starts processing.
      *
      * Here you could set dispatch parameters.
      */
-    protected function beforeDispatch($request, $response, $dispatcher)
+    protected function configureDispatcher(Backend_Request $request, 
+                                           Backend_Response $response, 
+                                           Backend_RequestDispatcher $dispatcher)
     {
     }
 
     /**
      * Called after dispatcher ends processing.
      */
-    protected function afterDispatch($view, $request, $response) 
+    protected function afterDispatch(Backend_View $view, 
+                                     Backend_Request $request, 
+                                     Backend_Response $response) 
     {
     }
 
     /**
      * Called before view display.
      */
-    protected function beforeDisplayView($view)
+    protected function configureView(Backend_View $view)
     {
     }
 
     /** 
      * Called if request dispatching failed.
      */
-    protected function dispatchFailed($request, $response)
+    protected function dispatchFailed(Backend_Request $request, 
+                                      Backend_Response $response)
     {
         header('HTTP/1.1 404 Not Found');
     }
 
     /**
-     * Runs request processing.
+     * Processes request.
      */
     public function run()
     {
-        $request = $this->createRequest();
-        $response = $this->createResponse();
+        $request    = $this->createRequest();
+        $response   = $this->createResponse();
         $dispatcher = $this->createDispatcher();
 
-        $this->beforeDispatch($request, $response, $dispatcher);
+        $this->configureDispatcher($request, $response, $dispatcher);
         try {
             $view = $dispatcher->dispatch($request, $response);
         }
@@ -83,7 +83,7 @@ class Backend_FrontController
             throw $e;
         }
 
-        $this->afterDispatch($view, $request, $response);            
+        $this->configureView($view, $request, $response);            
         $view->show($request, $response);
 
         $response->send();
