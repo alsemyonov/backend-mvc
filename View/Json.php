@@ -22,7 +22,7 @@ class Backend_View_Json extends Backend_View
     {
         $response->setEncoding('utf-8');
 //        $response->setContentType('application/json');
-        $response->setContentType('application/json');
+        $response->setContentType('text/html');
         $data = json_encode($this->getData());
         $response->out($data);
     }

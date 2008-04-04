@@ -195,10 +195,12 @@ class Backend_Request
 
     public function hasFiles()
     {
+        return count($_FILES == 0);
     }
 
-    public function getFile()
+    public function getFile($id)
     {
+        return $_FILES[$id];
     }
 }
 ?>
