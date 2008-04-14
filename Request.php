@@ -200,7 +200,30 @@ class Backend_Request
 
     public function getFile($id)
     {
-        return $_FILES[$id];
+        if (!is_array($_FILES[$id]['name'])) {
+            return $_FILES[$id];
+        } else {
+            $files = array();
+            $keys = array_keys($_FILES[$id]);
+            foreach($_FILES[$id]['name'] as $n=>$value) {
+                $file = array();
+                foreach($keys as $key) {
+                    $file[$key] = $_FILES[$id][$key][$n];
+                }
+                $files[] = $file;
+            }
+        }
+
+        return $files;
+    }
+
+    public function getAllFiles() 
+    {
+        $files = array();
+        foreach($_FILES as $id=>$file) {
+            $files[] = $this->getFile($id);
+        }
+        return $files;
     }
 }
 ?>

@@ -1,4 +1,4 @@
 <?php
-class Backend_TemplateRenderer_Exception extends Backend_Exception
+class Backend_Exception_TemplateRenderer extends Backend_Exception
 {
 }
