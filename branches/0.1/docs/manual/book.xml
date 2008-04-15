@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="windows-1251"?>
+
+<!DOCTYPE book
+  PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "file:/c:/docbook/dtd/docbookx.dtd"
+  [
+    <!--!ENTITY % global.entities SYSTEM "file:/c:/docbook/include/global.xml">
+    %global.entities;-->
+
+    <!ENTITY % entities SYSTEM "entities.xml">
+    %entities;
+  ]
+>
+
+<book lang="ru">
+
+  <bookinfo>
+   <title>Backend</title>
+    <pubdate>2008</pubdate>
+    <copyright>
+      <year>2008</year>
+      <holder>Виктор Соколов</holder>
+      <holder>Александр Семёнов</holder>
+    </copyright>
+  </bookinfo>
+
+<chapter>
+  <title>Backend</title>
+  <section>
+    <title>Ещё один фреймворк?</title>
+    <para>Нет.</para>
+    <para>Backend &mdash; легковесный и легко модифицируемый набор классов, реализующих шаблон Model-View-Controller.</para>
+    <!--para>Ключевые возможности Backend:</para>
+    <itemizedlist>
+    <listitem>
+    <para>Хорошо спроектирован. Поведение системы в любой фазе модифицируется.</para>
+    </listitem>
+    <listitem>
+    <para>Ориентирован на работу с XSLT.</para>
+    </listitem>
+    <listitem>
+    <para>Ориентирован на работу с AJAX (вместо обычных GET/POST-запросов можно использовать передачу JSON на сервер).</para>
+    </listitem>
+    <listitem>
+    <para>Гибкий модуль преобразования адресов.</para>
+    </listitem>
+    <listitem>
+    <para>В запросе принимается JSON-код.</para>
+    </listitem>
+    </itemizedlist-->
+
+  </section>
+  <section>
+      <title>Системные требования</title>
+      <itemizedlist>
+      <listitem><para>PHP 5.2.+</para></listitem>
+      <listitem><para>mod_rewrite</para></listitem>
+      </itemizedlist>
+  </section>
+  <section>
+    <title>Установка библиотек</title>
+    <para>Пока, существует единственный способ установки: из SVN.</para>
+    <programlisting><![CDATA[svn co http://code.google.com/p/backend-mvc/svn/trunk/]]></programlisting>
+  </section>
+</chapter>
+<chapter>
+  <title>Запуск Backend</title>
+  <para>В разделе описывается как создать сайт с единственной страницей.</para>
+  <para>Готовый пример можно скачать:</para>
+  <section>
+    <title>Создайте папки</title>
+    <para>Backend не привязан к какой-то конкретной структуре папок, однако, принята такая:</para>
+    <programlisting><![CDATA[
+        app/
+            controllers/
+            views/
+        www/
+    ]]></programlisting>
+    <itemizedlist>
+    <listitem><para>www &mdash; DocumentRoot, все файлы, доступные клиенту.</para></listitem>
+    <listitem><para>app &mdash; скрипты и шаблоны видов.</para></listitem>
+    </itemizedlist>    
+  </section>
+  <section>
+    <title>Создайте главный класс сайта</title>
+    <example>
+    <title>application.php</title>
+    <programlisting><![CDATA[
+    define('B_APP', realpath('../app/').DIRECTORY_SEPARATOR);
+    define('B_WWW', realpath('./').DIRECTORY_SEPARATOR);
+
+    set_include_path(
+        get_include_path().PATH_SEPARATOR .
+        B_APP.PATH_SEPARATOR
+    );
+
+    require_once 'PEAR.php';
+    require_once 'Backend-dev/Routes/Routes.php';
+    require_once 'Backend-dev/Mvc/Mvc.php';
+
+    include B_APP.'autoload.php';
+
+    class Application extends Backend_Mvc
+    {
+        static $db;
+
+        function createDispatcher()
+        {
+            return new Backend_Mvc_RequestDispatcherOnRoutes();
+        }
+
+        function beforeDispatch($request, $response, $dispatcher)
+        {
+            if (!ini_get('session.auto_start') || strtolower(ini_get('session.auto_start')) == 'off') {
+                session_start();
+            }
+
+            $routes = new Backend_Mvc_Routes();
+
+            include B_APP . 'routes.php';
+
+            $dispatcher->setRoutes($routes);
+        }
+    }        
+    ]]></programlisting>   
+    </example>
+    <para>Абстрактный класс Backend_Mvc содержит базовую логику обработки запроса. 
+    Backend_Mvc_RequestDispatcherOnRoutes обрабатывае запрос, используя для определения нужного контроллера
+    файл с правилами роутинга.</para>
+    <para></para>
+  </section>  
+  <section>
+    <title>Настройте правила преобразования адресов и файл, запускающий Backend</title>
+    <para>.htaccess:</para>
+    <programlisting><![CDATA[
+    DirectoryIndex index.php
+
+    AddDefaultCharset utf-8
+
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ /index.php?http_authorization=%{HTTP:Authorization}&%{QUERY_STRING} [L] #[E=path:$1,E=REMOTE_USER:%{HTTP:Authorization},L]    
+    ]]></programlisting>
+    <itemizedlist>
+    <listitem><para>Backend ориентирован на работу с Unicode, поэтому, принудительно устанавливается кодировка UTF-8 (на некоторых хостингах это нужно).</para></listitem>
+    <listitem><para>Все запросы несуществующих файлов переадресуются в index.php.</para></listitem>
+    <listitem><para>На некоторых хостингах, PHP работает как CGI-приложение и на таких хостингах не работает HTTP-авторизация. Передача данных авторизации через запрос помогает обойти это.</para></listitem>
+    </itemizedlist>    
+    <para>index.php</para>
+    <programlisting><![CDATA[       
+    require_once '../app/application.php';
+
+    $application = new Application();
+    $application->run();
+    ]]></programlisting>   
+  </section>  
+  <section>
+    <title>Создайте главный контроллер</title>
+    <programlisting><![CDATA[
+        
+    ]]></programlisting>   
+  </section>  
+  <section>
+    <title>Создайте вид</title>
+    <para>Index_index.xsl</para>
+    <programlisting><![CDATA[
+        
+    ]]></programlisting>   
+  </section>  
+  <section>
+    <title>Создайте адрес в карте сайта</title>
+    <para>routes.php</para>
+    <programlisting><![CDATA[
+        
+    ]]></programlisting>   
+  </section>  
+</chapter>
+<chapter>
+  <title>Фокусы</title>
+  <section>
+    <title>Работа с Ajax</title>
+    <para></para>
+  </section>
+  <section>
+    <title>Несколько сайтов в одной папке</title>
+    <para></para>
+  </section>
+  <section>
+    <title>RSS-вид</title>
+    <para></para>
+  </section>
+</chapter>
+<chapter>
+  <title>Модификация Backend</title>
+  <section>
+    <title>Работа с Ajax</title>
+    <para></para>
+  </section>
+</chapter>
+</book>
