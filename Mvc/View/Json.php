@@ -3,11 +3,11 @@
  * JSON view.
  * @todo Protect from XSS attacks.
  */
-class Backend_View_Json extends Backend_View
+class Backend_Mvc_View_Json extends Backend_Mvc_View
 {
     protected $data;
 
-    function setData($data)
+    function setHash($data)
     {
         $this->data = $data;
         return $this;
@@ -22,7 +22,7 @@ class Backend_View_Json extends Backend_View
     {
         $response->setEncoding('utf-8');
 //        $response->setContentType('application/json');
-        $response->setContentType('text/html');
+        $response->setContentType('text/plain');
         $data = json_encode($this->getData());
         $response->out($data);
     }

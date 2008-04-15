@@ -1,6 +1,8 @@
 <?
 /**
  * Элемент списка путей (базовый класс).
+ * @todo ($...) внутри адреса.
+ * @todo skip-маска
  */
 class Backend_Routes_Item
 {
@@ -47,7 +49,7 @@ class Backend_Routes_Item
             $matchNames = $matches[1];
             foreach( $matchNames as $varName )
             {
-                $url = str_replace('($'.$varName.')', '([\w-_.]+?)', $url);            
+                $url = str_replace('($'.$varName.')', '([\w-_.]+)', $url);            
             }
 
             $url = str_replace( '/', '\/', $url );
@@ -89,7 +91,7 @@ class Backend_Routes_Item
      */
     function using($template)
     {
-        if (!($template instanceof Backend_Routes_Item)) {
+        if (!is_subclass_of($template, 'Backend_Routes_Item')) {
             throw new Exception('Template item is not subclass of Routes_Item');
         }
         $this->params = array_merge($this->params, $template->params);
@@ -170,15 +172,6 @@ class Backend_Routes_Item
         }
 
         return false;
-    }
-
-    function __call($method, $args) {
-        if (count($args) == 1) {
-            $this->params[$method] = $args[0];
-        } else {
-            $this->params[$method] = $args;
-        }
-        return $this;
     }
 }
 ?>

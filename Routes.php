@@ -1,4 +1,35 @@
 <?php
+/**
+ * Routes package.
+ *
+ * PHP version 5.
+ *
+ * @version   @VERSION@
+ * @category  Backend
+ * @package   Routes
+ * @author    @VICTOR@
+ * @copyright @COPYRIGHT@
+ * @license   @LICENSE@
+ * @link      @PACKAGES_URL@/@PACKAGE_NAME@
+ */
+
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+
+require_once 'PEAR.php';
+require_once 'Routes/Item.php';
+
+/**
+ * Routing map class.
+ *
+ * See RoR Routes.
+ *
+ * @version  @VERSION@
+ * @category Backend
+ * @package  Routes
+ * @author   @VICTOR@
+ * @license  @LICENSE@
+ * @link     @PACKAGES_URL@/@PACKAGE_NAME@
+ */
 class Backend_Routes
 {
     /**
@@ -31,10 +62,12 @@ class Backend_Routes
         } else if (is_array($item)) {
             $this->items = array_merge($this->items, $item);
         } else if (!$item) {
-            $item = $this->create();
-            $this->items[] = $item;
-            return $item;
+            $item = &$this->create();
+
+            $this->items[] = &$item;
         }
+
+        return $item;
     }
    
     /**

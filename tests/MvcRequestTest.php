@@ -1,14 +1,14 @@
 <?php
 require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'Backend/Request.php';
+require_once 'Backend/Mvc/Request.php';
 
-class RequestTest extends PHPUnit_Framework_TestCase
+class MvcRequestTest extends PHPUnit_Framework_TestCase
 {
     public function testMethod() 
     {
         $_SERVER['REQUEST_METHOD'] = 'post';
 
-        $r = new Backend_Request();
+        $r = new Backend_Mvc_Request();
 
         $this->assertTrue($r->getMethod() == 'POST');
     }
@@ -17,12 +17,12 @@ class RequestTest extends PHPUnit_Framework_TestCase
     {
         $_SERVER['REQUEST_URI'] = '/test/how/it/splits/';
 
-        $r = new Backend_Request();
+        $r = new Backend_Mvc_Request();
         $this->assertTrue(count($r->getPathParts()) == 4);
 
         $_SERVER['REQUEST_URI'] = '/test///how/it//splits////';
 
-        $r = new Backend_Request();
+        $r = new Backend_Mvc_Request();
         $this->assertTrue(count($r->getPathParts()) == 4);
     }
 
@@ -30,22 +30,22 @@ class RequestTest extends PHPUnit_Framework_TestCase
     {
         $_SERVER['REQUEST_URI'] = '/test/get.html';
 
-        $r = new Backend_Request();
+        $r = new Backend_Mvc_Request();
         $this->assertTrue($r->wants() == 'text/html');
 
         $_SERVER['REQUEST_URI'] = '/test/get.js';
 
-        $r = new Backend_Request();
-        $this->assertTrue($r->wants() == 'application/json');
+        $r = new Backend_Mvc_Request();
+        $this->assertTrue($r->wants() == 'text/javascript');
 
         $_SERVER['REQUEST_URI'] = '/test/get.html/get.xml';
 
-        $r = new Backend_Request();
+        $r = new Backend_Mvc_Request();
         $this->assertTrue($r->wants() == 'text/xml');
         
         $_SERVER['REQUEST_URI'] = '/test/get.shit';
 
-        $r = new Backend_Request();
+        $r = new Backend_Mvc_Request();
         $this->assertTrue($r->wants() == 'text/html');
     }
 }

@@ -1,8 +1,30 @@
 <?php
 /**
+ * Base controller class for DispatcherOnRoutes. Using this class as base is optional BUT
+ * in any class method prototypes should be like this controller index method AND
+ * all action() handlers should be public, helper functions and other should be private.
+ *
+ * @todo Implement view-by-extension.
+ * @todo Backend_Mvc_IHashView
+ * @todo Kill accept, and make extension accept
  */
-class Backend_Controller
+class Backend_Mvc_Controller
 {
+    /**
+     * Action dispatch method. Receives action name from routes argument.
+     */
+    function dispatch($req, $res, $args)
+    {      
+        $action = strtolower($args['action']);
+        if (!$action) $action = array_pop($req->getPathParts());
+
+        if (!method_exists($this, $action)) {
+            $res->notFound();
+            throw new Backend_Mvc_Exception('Page not found: dispatch() could not find method for '.$action.' in controller '.get_class($this));
+        }
+        return $this->$action($req, $res, $args, $req->getQuery());
+    }
+
     /**
      * Displays empty page.
      */
@@ -17,7 +39,7 @@ class Backend_Controller
      * @todo _REQUEST
      * @todo Right logout.
      */
-/*    static function auth($realm) {
+    static function auth($realm) {
         if ($_REQUEST['http_authorization']) {
             $cgiAuth = $_REQUEST['http_authorization'];
             if ($cgiAuth)
@@ -49,5 +71,6 @@ class Backend_Controller
                 die;
             }
         }
-    }*/
+    }
+
 }
