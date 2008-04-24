@@ -1,21 +1,9 @@
 <?php
 /**
- * Request data.
- * @todo set public to all methods.
- * @todo write comments
- * @todo correct media-types
- * @todo mediat-type-table
- * @todo на хуй убрать переменные
+ * Request class.
  */
 class Backend_Request
 {   
-    private $extMime = array(
-        'js'=>'application/json',
-        'json'=>'application/json',
-        'xml'=>'text/xml',
-        'html'=>'text/html'
-    );
-
     protected $path;
     protected $pathParts;
     protected $httpRequest;
@@ -27,7 +15,6 @@ class Backend_Request
 
     /**
      * Constructor. Reads environment variables (request uri, host, etc.)
-     * @todo for remote_addrs: proxy handling.
      */
     public function __construct()
     {
@@ -54,29 +41,38 @@ class Backend_Request
 
         $this->request = array_merge($this->getJsonRequest(), $this->getHttpRequest());
 
-        $this->wants = $this->whatHeWants();
+        $this->wants = $this->clientAccepts();
     }
 
     /** 
      * Determines client's accept MIME-type.
      */
-    protected function whatHeWants() 
+    protected function clientAccepts() 
     {
-        $type = 'text/html';
-
         $parts = pathinfo($this->path);
-
         if ($parts['extension']) {
-            if (isset($this->extMime[$parts['extension']]))
-                return $this->extMime[$parts['extension']];
+            switch($parts['extension']) {
+                case 'js':
+                case 'json':
+                    return 'application/json';
+                break;
+                case 'xml':
+                    return 'text/xml';
+                break;
+                case 'html':
+                case 'php':
+                    return 'text/html';
+                break;
+                default:
+                    $xrq = $this->getHeader('X-Requested-With');
+                    if (strtolower($xrq) == 'xmlhttprequest') {
+                        return 'application/json';
+                    }
+                break;
+            }
         }
 
-        $xrq = $this->getHeader('X-Requested-With');
-        if (strtolower($xrq) == 'xmlhttprequest') {
-            $type = 'application/json';
-        }
-
-        return $type;        
+        return 'text/html';
     }
 
     /**
@@ -90,7 +86,7 @@ class Backend_Request
     /**
      * Gets request path.
      */
-    function getPath()
+    public function getPath()
     {
         return $this->path;
     }
@@ -98,7 +94,7 @@ class Backend_Request
     /**
      * Gets request path splitted by '/'.
      */
-    function getPathParts()
+    public function getPathParts()
     {
         return $this->pathParts;
     }
@@ -106,7 +102,7 @@ class Backend_Request
     /**
      * Gets request HTTP host.
      */
-    function getHost()
+    public function getHost()
     {
         return $_SERVER['HTTP_HOST'];
     }
@@ -114,7 +110,7 @@ class Backend_Request
     /**
      * Gets port.
      */
-    function getPort()
+    public function getPort()
     {
         return $_SERVER['SERVER_PORT'];
     }
@@ -122,7 +118,7 @@ class Backend_Request
     /**
      * Gets request query variables (join of GET and POST).
      */
-    function getHttpRequest()
+    public function getHttpRequest()
     {
         return $this->httpRequest;
     }
@@ -135,16 +131,17 @@ class Backend_Request
     }
 
     /** 
-     * Returns query (merged GET, POST and Json queries).
+     * Returns query (merged GET, POST and Json query parameters).
+     * Merging priority: JSON <- GET <- POST
      */
-    public function getRequest() {
+    public public function getRequest() {
         return $this->request;
     }
 
     /**
      * Returns request headers.
      */
-    function getHeaders()
+    public function getHeaders()
     {
         return $this->headers;
     }
@@ -152,7 +149,7 @@ class Backend_Request
     /**
      * Returns request header by name.
      */
-    function getHeader($name)
+    public function getHeader($name)
     {
         $name = strtolower($name);
         return $this->headers[$name];
@@ -161,7 +158,7 @@ class Backend_Request
     /**
      * Returns remote IP address.
      */
-    function getRemoteAddr()
+    public function getRemoteAddr()
     {
         return $_SERVER['REMOTE_ADDR'];
     }
@@ -169,14 +166,14 @@ class Backend_Request
     /**
      * Returns raw post data.
      */
-    function getPostData() {
+    public function getPostData() {
         return $this->postData;
     }
 
     /**
      * Returns MIME-type of client request.
      */
-    function wants() {
+    public function wants() {
         return $this->wants;
     }
 
@@ -185,19 +182,20 @@ class Backend_Request
      */
     public function getRequestParameter($name, $default = null)
     {
-        $request = $this->getRequest();
-        if ($request[$name]) {
-            return $request[$name];
-        } else {
-            return $default;
-        }
+        isset($this->request[$name]) ? $this->request[$name] : $default;
     }
 
+    /**
+     * Returns count of uploaded file.
+     */
     public function hasFiles()
     {
         return count($_FILES == 0);
     }
 
+    /**
+     * Returns file by id.
+     */
     public function getFile($id)
     {
         if (!is_array($_FILES[$id]['name'])) {
@@ -217,6 +215,9 @@ class Backend_Request
         return $files;
     }
 
+    /**
+     * Returns all uploaded files.
+     */
     public function getAllFiles() 
     {
         $files = array();

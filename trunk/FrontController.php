@@ -1,14 +1,11 @@
 <?php
-require_once 'PEAR.php';
-require_once 'PEAR/Exception.php';
-
 /**
- * Front controller class.
+ * Front controller.
  */
 abstract class Backend_FrontController
 {
     /**
-     * Creates request object (factory method).
+     * Creates and returns request object.
      */
     protected function createRequest()
     {
@@ -16,7 +13,7 @@ abstract class Backend_FrontController
     }
 
     /**
-     * Creates response object (factory method).
+     * Creates and returns response object.
      */
     protected function createResponse()
     {
@@ -24,69 +21,42 @@ abstract class Backend_FrontController
     }
 
     /**
-     * Creates dispatcher object (factory method).
+     * Creates and returns session object.
      */
-    abstract protected function createDispatcher();
-
-    /**
-     * Called before dispatcher starts processing.
-     *
-     * Here you could set dispatch parameters.
-     */
-    protected function configureDispatcher(Backend_Request $request, 
-                                           Backend_Response $response, 
-                                           Backend_RequestDispatcher $dispatcher)
+    protected function createSession()
     {
+        return new Backend_Session();
     }
 
     /**
-     * Called after dispatcher ends processing.
+     * Dispatches action.
      */
-    protected function afterDispatch(Backend_View $view, 
-                                     Backend_Request $request, 
-                                     Backend_Response $response) 
-    {
-    }
+    public function dispatch()
+    {   
+        $request = $this->createRequest();
+        $response = $this->createResponse();
+        $session = $this->createSession();
 
-    /**
-     * Called before view display.
-     */
-    protected function configureView(Backend_View $view)
-    {
-    }
+        $this->configure($request, $response, $session);
 
-    /** 
-     * Called if request dispatching failed.
-     */
-    protected function dispatchFailed(Backend_Request $request, 
-                                      Backend_Response $response)
-    {
-        header('HTTP/1.1 404 Not Found');
-    }
+        list($controller, $action, $args) = $this->getAction($request, $session);
+        $controller = new $controller($request, $response, $session);
 
-    /**
-     * Processes request.
-     */
-    public function run()
-    {
-        $request    = $this->createRequest();
-        $response   = $this->createResponse();
-        $dispatcher = $this->createDispatcher();
-
-        $this->configureDispatcher($request, $response, $dispatcher);
-        try {
-            $view = $dispatcher->dispatch($request, $response);
+        $action = array($controller, $action);
+        if (is_callable($action)) {
+            $view = call_user_func($action, $args);
+            $view->show($request, $response, $session);
+            $response->send();
         }
-
-        catch(Backend_Exception_PageNotFound $e) {
-            $this->dispatchFailed($request, $response);
-            throw $e;
-        }
-
-        $this->configureView($view, $request, $response);            
-        $view->show($request, $response);
-
-        $response->send();
     }
+
+    /**
+     * Returns controller, action and arguments (parameters) of action.
+     */
+    abstract public function getAction(Backend_Request $request, Backend_Session $session);
+
+    /**
+     * Configures front controller.
+     */
+    abstract protected function configure(Backend_Request $request, Backend_Response $response, Backend_Session $session);
 }
-?>

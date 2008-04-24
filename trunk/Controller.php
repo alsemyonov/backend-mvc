@@ -1,53 +1,63 @@
 <?php
-/**
- */
 class Backend_Controller
 {
-    /**
-     * Displays empty page.
-     */
-    function index($req, $res, $args)
+    public function __construct($request, $response, $session)
     {
-        return array();
+        $this->request = $request;
+        $this->response = $response;
+        $this->session = $session;
     }
 
-    /**
-     * Default authentification function.
-     * Handles http_authorization value if exists.
-     * @todo _REQUEST
-     * @todo Right logout.
-     */
-/*    static function auth($realm) {
-        if ($_REQUEST['http_authorization']) {
-            $cgiAuth = $_REQUEST['http_authorization'];
-            if ($cgiAuth)
-            {
-                $auth = split( ' ', $cgiAuth);
-                $loginPw = split( ':', base64_decode( $auth[1] ) );
-            
-                $_SERVER['PHP_AUTH_USER'] = $loginPw[ 0 ];
-                $_SERVER['PHP_AUTH_PW'] = $loginPw[ 1 ];
-            }
+    protected function createView()
+    {
+        switch($this->request->wants()) {
+            case 'text/html':
+                return new Backend_View_Template_Xslt();
+            break;
+            case 'application/json':
+                return new Backend_View_Json();
+            break;
+            case 'text/xml':
+                return new Backend_View_Xml();
+            break;
+            default:
+                return new Backend_View_Dump();
+            break;
         }
-
-        if ($_REQUEST['logout']) {
-            header('WWW-Authenticate: Basic realm="'.$realm.'"');
-            header('HTTP/1.0 401 Unauthorized');
-            die;
-        }
-
-        if (!isset($_SERVER['PHP_AUTH_USER'])) 
-        {
-            header('WWW-Authenticate: Basic realm="'.$realm.'"');
-            header('HTTP/1.0 401 Unauthorized');
-            die;
+    }
+   
+    protected function respond($args)
+    {
+        if ($args['class']) {
+            $viewClass = $args['class'];
+            $view = new $viewClass;
         } else {
-            if (($_SERVER['PHP_AUTH_USER'] != $realm[0]) || ($_SERVER['PHP_AUTH_PW'] != $realm[1]))
-            {
-                header('WWW-Authenticate: Basic realm="'.$realm.'"');
-                header('HTTP/1.0 401 Unauthorized');
-                die;
+            $view = $this->createView();
+        }
+
+        if (is_a($view, 'Backend_View_Template')) {
+            if ($args['file']) {
+                $view->getRenderer()->loadFromFile($args['file']);
+            }
+            if ($args['template']) {
+                $view->getRenderer()->loadFromString($args['template']);
             }
         }
-    }*/
+
+        $data = is_array($args['data']) ? $args['data'] : array();
+        if (is_a($view, 'Backend_View_Json')) {
+            $view->setData($data);
+        } else {
+            $view->getRenderer()->setData($data);
+        }
+
+        return $view;
+    }
+
+    protected function index($args)
+    {
+        return $this->respond(array(
+            'data'=>array()
+        ));
+    }
 }

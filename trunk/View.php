@@ -7,6 +7,6 @@ abstract class Backend_View
     /**
      * Outputs view contents. May change response headers such as content-type.
      */
-    abstract public function show($request, $response);
+    abstract public function show(Backend_Request $request, Backend_Response $response);
 }
 ?>

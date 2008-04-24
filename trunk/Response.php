@@ -1,6 +1,6 @@
 <?php
 /**
- * Response data.
+ * Response class.
  * @todo header functions: lcase.
  */
 class Backend_Response
@@ -11,31 +11,49 @@ class Backend_Response
     protected $contentType = null;
     protected $responseCode = null;
 
-    function setHeader($name, $value)
+    /**
+     * Sets response header.
+     */
+    public function setHeader($name, $value)
     {
         $this->headers[$name] = $value;
     }
 
-    function setResponseCode($code) {
+    /**
+     * Sets response code.
+     */
+    public function setResponseCode($code) {
         $this->responseCode = $code;
     }
 
-    function getHeader($name)
+    /**
+     * Gets response header.
+     */
+    public function getHeader($name)
     {
         return $this->headers[$name];
     }
 
-    function getHeaders()
+    /**
+     * Gets response headers.
+     */
+    public function getHeaders()
     {
         return $this->headers;
     }
 
-    function setEncoding($encoding)
+    /**
+     * Sets response encoding.
+     */
+    public function setEncoding($encoding)
     {
         $this->encoding = $encoding;
     }
 
-    function getEncoding()
+    /**
+     * Gets response encoding.
+     */
+    public function getEncoding()
     {
         return $this->encoding;
     }
@@ -43,7 +61,7 @@ class Backend_Response
     /**
      * Sets current content-type.
      */
-    function setContentType($contentType)
+    public function setContentType($contentType)
     {
         $this->contentType = $contentType;
     }
@@ -51,7 +69,7 @@ class Backend_Response
     /**
      * Gets current content-type.
      */
-    function getContentType()
+    public function getContentType()
     {
         return $this->contentType;
     }
@@ -59,16 +77,15 @@ class Backend_Response
     /**
      * Echoes data to internal output buffer.
      */
-    function out($str)
+    public function out($str)
     {
         $this->out .= $str;
     }
 
     /**
      * Returns output buffer.
-     * @todo Handlers...
      */
-    function getOutput()
+    public function getOutput()
     {
         return $this->out;
     }
@@ -77,7 +94,7 @@ class Backend_Response
      * Redirects user's browser.
      * @param bool $force If true, redirecting made immediately, function calls die().
      */
-    function redirect($url, $force = true)
+    public function redirect($url, $force = true)
     {
         if ($force) {
             header('Location: ' . $url);
@@ -90,12 +107,15 @@ class Backend_Response
     /**
      * Sets 404 Not Found request header.
      */
-    function notFound() 
+    public function notFound() 
     {
         $this->setResponseCode('404 Not Found');
     }
 
-    function send()
+    /**
+     * Sends response to user.
+     */
+    public function send()
     {
         if (($this->encoding) || ($this->contentType)) {
             $contentType = $this->contentType ? $this->contentType : 'text/html';
