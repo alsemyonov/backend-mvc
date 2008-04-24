@@ -25,7 +25,7 @@ abstract class Backend_View_Template extends Backend_View
     /**
      * Shows view.
      */
-    function show($request, $response)
+    function show(Backend_Request $request, Backend_Response $response)
     {
         $data = $this->getRenderer()->getData();
         if (is_array($data)) {
