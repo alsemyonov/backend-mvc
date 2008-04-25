@@ -25,7 +25,7 @@ class Backend_Controller
     /**
      * Respond to application/json request.
      */
-    protected function respondJson(array $data) 
+    protected function respondJson($data = null) 
     {
         $view = new Backend_View_Json();
         return $view->setData($data);

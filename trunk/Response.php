@@ -23,7 +23,7 @@ class Backend_Response
      * Sets response code.
      */
     public function setCode($code) {
-        $this->responseCode = $code;
+        $this->code = $code;
     }
 
     /**
@@ -121,7 +121,7 @@ class Backend_Response
             $contentType = $this->contentType ? $this->contentType : 'text/html';
             $this->setHeader('Content-type', $contentType.($this->encoding ? '; charset='.$this->encoding : '' ) );
         }
-        if ($this->responseCode) {
+        if ($this->code) {
             header('HTTP/1.0 '.$this->code);
         }
         foreach($this->getHeaders() as $name=>$header)
