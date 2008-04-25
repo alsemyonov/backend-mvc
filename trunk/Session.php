@@ -54,4 +54,9 @@ class Backend_Session
     {
         return session_id();
     }
+
+    public function destroy()
+    {
+        session_destroy();
+    }
 }

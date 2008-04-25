@@ -31,7 +31,7 @@ class Backend_TemplateRenderer_Xslt extends Backend_TemplateRenderer
             $this->loadFromDom($arg);
         }
 
-        parent::loadFrom($media, $arg);
+        return parent::loadFrom($media, $arg);
     }
 
     /**
@@ -49,6 +49,7 @@ class Backend_TemplateRenderer_Xslt extends Backend_TemplateRenderer
     {
         $content = DOMDocument::load($data, $this->options['xslLoadFlags']);
         $this->content = $content;
+        return $this;
     }
 
     /**
@@ -58,6 +59,7 @@ class Backend_TemplateRenderer_Xslt extends Backend_TemplateRenderer
     {
         $content = DOMDocument::loadXML($data, $this->options['xslLoadFlags']);
         $this->content = $content;
+        return $this;
     }
 
     /**

@@ -21,8 +21,8 @@ class Backend_View_Json extends Backend_View
     function show(Backend_Request $request, Backend_Response $response)
     {
         $response->setEncoding('utf-8');
-//        $response->setContentType('application/json');
-        $response->setContentType('text/html');
+        $response->setContentType('application/json');
+//        $response->setContentType('text/html');
         $data = json_encode($this->getData());
         $response->out($data);
     }

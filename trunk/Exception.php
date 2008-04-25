@@ -2,5 +2,6 @@
 /**
  * Base exception class.
  */
-class Backend_Exception extends Exception {
+class Backend_Exception extends Exception 
+{
 }

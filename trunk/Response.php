@@ -9,7 +9,7 @@ class Backend_Response
     protected $headers = array();
     protected $encoding = null;
     protected $contentType = null;
-    protected $responseCode = null;
+    protected $code = null;
 
     /**
      * Sets response header.
@@ -22,7 +22,7 @@ class Backend_Response
     /**
      * Sets response code.
      */
-    public function setResponseCode($code) {
+    public function setCode($code) {
         $this->responseCode = $code;
     }
 
@@ -109,7 +109,7 @@ class Backend_Response
      */
     public function notFound() 
     {
-        $this->setResponseCode('404 Not Found');
+        $this->setCode('404 Not Found');
     }
 
     /**
@@ -122,7 +122,7 @@ class Backend_Response
             $this->setHeader('Content-type', $contentType.($this->encoding ? '; charset='.$this->encoding : '' ) );
         }
         if ($this->responseCode) {
-            header('HTTP/1.0 '.$this->responseCode);
+            header('HTTP/1.0 '.$this->code);
         }
         foreach($this->getHeaders() as $name=>$header)
         {
