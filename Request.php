@@ -32,14 +32,14 @@ class Backend_Request
         $p = parse_url($_SERVER['REQUEST_URI']);
         $this->path = $p['path'];
         $this->pathParts = split('/', $this->path);
-        $this->pathParts = array_filter($this->pathParts, create_function('$el', 'return $el!="";'));
+        $this->pathParts = array_values(array_filter($this->pathParts, create_function('$el', 'return $el!="";')));
 
         $this->httpQuery = array_merge($_GET, $_POST);
         $this->postData = file_get_contents('php://input');
         $a = json_decode($this->getPostData(), true);
         $this->jsonQuery = is_array($a) ? $a : array();
 
-        $this->request = array_merge($this->getJsonQuery(), $this->getHttpQuery());
+        $this->query = array_merge($this->getJsonQuery(), $this->getHttpQuery());
 
         $this->wants = $this->clientAccepts();
     }
@@ -134,8 +134,8 @@ class Backend_Request
      * Returns query (merged GET, POST and Json query parameters).
      * Merging priority: JSON <- GET <- POST
      */
-    public public function getRequest() {
-        return $this->request;
+    public public function getQuery() {
+        return $this->query;
     }
 
     /**
@@ -180,9 +180,9 @@ class Backend_Request
     /**
      * Returns request parameter or default value.
      */
-    public function getRequestParameter($name, $default = null)
+    public function getParameter($name, $default = null)
     {
-        isset($this->request[$name]) ? $this->request[$name] : $default;
+        return isset($this->query[$name]) ? $this->query[$name] : $default;
     }
 
     /**
