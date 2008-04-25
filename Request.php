@@ -6,8 +6,8 @@ class Backend_Request
 {   
     protected $path;
     protected $pathParts;
-    protected $httpRequest;
-    protected $jsonRequest;
+    protected $httpQuery;
+    protected $jsonQuery;
     protected $post;
     protected $headers;
     protected $postData;
@@ -34,12 +34,12 @@ class Backend_Request
         $this->pathParts = split('/', $this->path);
         $this->pathParts = array_filter($this->pathParts, create_function('$el', 'return $el!="";'));
 
-        $this->httpRequest = array_merge($_GET, $_POST);
+        $this->httpQuery = array_merge($_GET, $_POST);
         $this->postData = file_get_contents('php://input');
         $a = json_decode($this->getPostData(), true);
-        $this->jsonRequest = is_array($a) ? $a : array();
+        $this->jsonQuery = is_array($a) ? $a : array();
 
-        $this->request = array_merge($this->getJsonRequest(), $this->getHttpRequest());
+        $this->request = array_merge($this->getJsonQuery(), $this->getHttpQuery());
 
         $this->wants = $this->clientAccepts();
     }
@@ -118,16 +118,16 @@ class Backend_Request
     /**
      * Gets request query variables (join of GET and POST).
      */
-    public function getHttpRequest()
+    public function getHttpQuery()
     {
-        return $this->httpRequest;
+        return $this->httpQuery;
     }
 
     /**
      * Returns result of JSON deserializing raw post data.
      */
-    function getJsonRequest() {
-        return $this->jsonRequest;
+    function getJsonQuery() {
+        return $this->jsonQuery;
     }
 
     /** 

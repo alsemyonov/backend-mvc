@@ -1,63 +1,92 @@
 <?php
+/**
+ * Controller base class.
+ */
 class Backend_Controller
 {
-    public function __construct($request, $response, $session)
+    /**
+     * Constructor.
+     */
+    public function __construct(Backend_Request $request, Backend_Response $response, Backend_Session $session)
     {
         $this->request = $request;
         $this->response = $response;
         $this->session = $session;
+//        $this->configure();
     }
 
-    protected function createView()
+    /**
+     * Called from constructor.
+     */
+//    protected function configure()
+//    {
+//    }
+
+    /**
+     * Respond to application/json request.
+     */
+    protected function respondJson(array $data) 
     {
-        switch($this->request->wants()) {
-            case 'text/html':
-                return new Backend_View_Template_Xslt();
-            break;
-            case 'application/json':
-                return new Backend_View_Json();
-            break;
-            case 'text/xml':
-                return new Backend_View_Xml();
+        $view = new Backend_View_Json();
+        return $view->setData($data);
+    }  
+
+    /**
+     * Respond to text/xml request.
+     */
+    protected function respondXml(array $data)
+    {
+        $view = new Backend_View_Xml();
+        return $view->setData($data);
+    }
+
+    /**
+     * Responds to text/html request.
+     */
+    protected function respondHtml($class, array $data, $arg, $media = 'file', array $options = array())
+    {
+        switch(strtolower($class)) {
+            case 'xslt':
+                $view = new Backend_View_Template_Xslt();
             break;
             default:
-                return new Backend_View_Dump();
+                $view = new Backend_View_Template_Php();
             break;
         }
-    }
-   
-    protected function respond($args)
-    {
-        if ($args['class']) {
-            $viewClass = $args['class'];
-            $view = new $viewClass;
-        } else {
-            $view = $this->createView();
-        }
 
-        if (is_a($view, 'Backend_View_Template')) {
-            if ($args['file']) {
-                $view->getRenderer()->loadFromFile($args['file']);
-            }
-            if ($args['template']) {
-                $view->getRenderer()->loadFromString($args['template']);
-            }
-        }
-
-        $data = is_array($args['data']) ? $args['data'] : array();
-        if (is_a($view, 'Backend_View_Json')) {
-            $view->setData($data);
-        } else {
-            $view->getRenderer()->setData($data);
-        }
+        $view->getRenderer()
+            ->setOptions($options)
+            ->loadFrom($media, $arg)
+            ->setData($data);
 
         return $view;
     }
 
+    /**
+     * Redirects user's browser.
+     */
+    protected function redirect()
+    {
+        
+    }
+
+    /**
+     * Default response handler.
+     */
     protected function index($args)
     {
-        return $this->respond(array(
-            'data'=>array()
-        ));
+        switch ($this->request->wants()) {
+            case 'text/html':
+                $this->respondHtml('xslt', array(), B_APP . 'views/index.xsl');
+            break;
+
+            case 'application/json':
+                $this->respondJson(array());
+            break;
+
+            case 'text/xml':
+                $this->respondXml(array());
+            break;
+        }
     }
 }

@@ -22,7 +22,7 @@ abstract class Backend_TemplateRenderer
     /**
      * Creates template renderer.
      */
-    public function __construct($media = null, $arg = null, $data = null, $options = null) {
+    public function __construct($media = null, $arg = null, array $data = null, array $options = null) {
         if ($options != null) $this->setOptions($options);
         if ($media != null) $this->load($media, $arg);
         if ($data != null) $this->setData($data);
@@ -34,6 +34,7 @@ abstract class Backend_TemplateRenderer
     public function setOptions($options) 
     {
         $this->options = array_merge($this->options, $options);
+        return $this;
     }    
 
     /**
@@ -50,6 +51,7 @@ abstract class Backend_TemplateRenderer
     public function setData($data)
     {
         $this->data = $data;
+        return $this;
     }
 
     /**
@@ -63,7 +65,7 @@ abstract class Backend_TemplateRenderer
     /**
      * Load dispatcher function.
      */
-    public function load($media, $arg)
+    public function loadFrom($media, $arg)
     {
         switch(strtolower($media)) {
             case 'file':
@@ -73,6 +75,7 @@ abstract class Backend_TemplateRenderer
                 $this->loadFromString($arg);
             break;
         }
+        return $this;
     }
 
     /**
@@ -84,6 +87,7 @@ abstract class Backend_TemplateRenderer
             throw new Backend_Exception_FileNotFound($fileName);
         }
         $this->loadFromString(file_get_contents($fileName));
+        return $this;
     }
 
     /**
@@ -92,6 +96,7 @@ abstract class Backend_TemplateRenderer
     public function loadFromString($content)
     {
         $this->content = $content;
+        return $this;
     }
 
     /**
